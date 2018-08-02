@@ -3,11 +3,11 @@ const path = require('path')
 module.exports = {
 
   target: 'node',
-  mode: 'production',
+  mode: 'development',
   externals: ['electron'],
 
   entry: {
-    console: './src/entry.js',
+    bundle: './src/entry.js',
   },
 
   output: {
@@ -29,11 +29,11 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
+        exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: { presets: ['env'], },
         },
-        exclude: /node_modules/,
       },
     ],
   },
