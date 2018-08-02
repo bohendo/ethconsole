@@ -13,7 +13,7 @@ $(shell mkdir -p build)
 
 ## Phony Rules
 
-all: bundle.js
+all: node-modules
 	@true
 
 clean:
@@ -21,10 +21,7 @@ clean:
 
 ## Real Rules
 
-bundle.js: node-modules $(src)
-	$(webpack) --config ./ops/webpack.js
-
-node-modules: package.json yarn.lock
+node-modules: package.json
 	yarn install
 	touch build/node-modules
 

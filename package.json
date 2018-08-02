@@ -9,13 +9,7 @@
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^4.21.0",
     "@ledgerhq/hw-transport-node-hid": "^4.22.0",
-    "aws-sdk": "^2.285.1",
     "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "web3": "^1.0.0-beta.35",
-    "webpack": "^4.16.3",
-    "webpack-cli": "^3.1.0"
+    "web3": "^1.0.0-beta.35"
   }
 }

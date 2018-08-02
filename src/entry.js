@@ -1,13 +1,14 @@
-import Web3 from 'web3'
-
-//import Transport from "@ledgerhq/hw-transport-node-hid"
-import Wallet from '@ledgerhq/hw-app-eth'
+const Web3 = require('web3')
+const Transport = require('@ledgerhq/hw-transport-node-hid')
+const Wallet = require('@ledgerhq/hw-app-eth')
 
 console.log(`Connecting to wallet: Ledger`)
 
 console.log(`Connecting to eth provider: ${process.env.ETHPROVIDER}`)
 
 const web3 = new Web3(new Web3.providers.WebsocketProvider(process.env.ETHPROVIDER))
+const transport = Transport
+//const wallet = new Wallet(transport)
 
 web3.eth.getBlock('latest').then(response => {
     if (response.number) {
@@ -19,6 +20,5 @@ web3.eth.getBlock('latest').then(response => {
     console.log(`Connection to ethereum provider failed`)
 })
 
-web3.hid = HID
-
-export default web3
+global.web3 = web3
+global.transport = transport
