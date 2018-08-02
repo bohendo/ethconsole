@@ -1,0 +1,16 @@
+{
+  "name": "ethconsole",
+  "version": "0.0.1",
+  "description": "Ethereum console that uses a local wallet and a remote eth provider",
+  "main": "entry.js",
+  "repository": "git@gitlab.com:bohendo/ethconsole.git",
+  "author": "Bo Henderson <gitlab.com/bohendo> & Shivani Gupta <gitlab.com/shivgupt>",
+  "license": "MIT",
+  "dependencies": {
+    "@ledgerhq/hw-app-eth": "^4.21.0",
+    "babel-loader": "^7.1.5",
+    "web3": "^1.0.0-beta.35",
+    "webpack": "^4.16.3",
+    "webpack-cli": "^3.1.0"
+  }
+}
