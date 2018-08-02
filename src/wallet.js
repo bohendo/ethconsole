@@ -41,4 +41,18 @@ wallet.signMsg = (address_index, hexMsg) => {
     return sign(address_index, hexMsg, 'signPersonalMessage')
 }
 
+wallet.setAccount = (address_index) => {
+    wallet.getAddress(address_index).then(address => {
+        process.env.ETH_ADDRESS = address
+        process.env.ETH_ADDRESS_INDEX = address_index
+        console.log(`Successfully set "from address" as: accounts[${process.env.ETH_ADDRESS_INDEX}] = "${process.env.ETH_ADDRESS}"`)
+    }).catch(ledgerError)
+}
+
+wallet.unsetAccount = () => {
+    delete process.env.ETH_ADDRESS
+    delete process.env.ETH_ADDRESS_INDEX
+    console.log(`Successfully unset "from address"`)
+}
+
 module.exports = wallet

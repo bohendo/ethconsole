@@ -12,4 +12,4 @@ web3.eth.getBlock('latest').then(response => {
     console.log(`Connection to ethereum provider failed`)
 })
 
-module.export = web3
+module.exports = web3
