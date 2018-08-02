@@ -1,5 +1,5 @@
 const Web3 = require('web3')
-const sign = require('./sign')
+const wallet = require('./wallet')
 
 console.log(`Connecting to eth provider: ${process.env.ETHPROVIDER}`)
 
@@ -15,6 +15,6 @@ web3.eth.getBlock('latest').then(response => {
     console.log(`Connection to ethereum provider failed`)
 })
 
-web3.sign = sign
+web3.wallet = wallet
 
 global.web3 = web3
