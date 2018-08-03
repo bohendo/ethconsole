@@ -2,7 +2,7 @@ const TransportNodeHid = require('@ledgerhq/hw-transport-node-hid').default
 const Eth = require('@ledgerhq/hw-app-eth').default
 
 const ledgerError = (msg) => {
-    console.error(`Failed to access ledger, please plug-in or unlock device: ${msg}`)
+    throw(msg)
 }
 
 var ledger

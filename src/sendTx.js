@@ -4,42 +4,51 @@ const EthereumTx = require('ethereumjs-tx')
 const web3 = require('./web3')
 const wallet = require('./wallet')
 
+const txError = (msg) => {
+    console.error(`Error sending transaction: ${msg}`)
+}
+
 global.tx = {
     to: '0xb2fC8A24F1ac52C577DF7be839cF2a4304E08a92',
-    value: '6000000000000000',
+    value: '2000000000000000',
     data: '0x'
 }
 
-const sendTx = (tx) => {
+const prepTx = (tx) => {
     tx.from = process.env.ETH_ADDRESS
     if (!tx.from || !process.env.ETH_ADDRESS_INDEX || tx.from.length !== 42) {
-        console.log(`Please specify a "from address" with: wallet.setAccount(integer)`)
-        return null
+        throw(`Please specify a "from address" with: wallet.setAccount(integer)`)
     }
 
     return wallet.getAddress(process.env.ETH_ADDRESS_INDEX).then(address => {
         if (address !== tx.from) {
-            console.log(`Error, from address and index do not match, please run wallet.setAccount(integer) again`)
-            return null
+            throw(`Error, from address and index do not match, please run wallet.setAccount(integer) again`)
         }
 
-        return getGasPrice()
-    }).then(gasPrice => {
-        tx.gasPrice = gasPrice
-        return web3.eth.estimateGas(tx)
-    }).then(gas => {
-        tx.gas = gas * 2
-        return web3.eth.getTransactionCount(tx.from)
-    }).then(nonce => {
-        tx.nonce = nonce
+        return getGasPrice().then(gasPrice => {
+            tx.gasPrice = gasPrice
+            return web3.eth.estimateGas(tx).then(gas => {
+                tx.gas = String(gas * 1.5)
+                return web3.eth.getTransactionCount(tx.from).then(nonce => {
+                    tx.nonce = nonce
+                    console.log(`Preparing to sign transaction: ${JSON.stringify(tx, null, 2)}`)
 
-        console.log(`Preparing to sign transaction: ${JSON.stringify(tx, null, 2)}`)
+                    tx.chainId = 1
+                    tx.v = '0x01'
+                    tx.s = '0x00'
+                    tx.r = '0x00'
 
-        tx.chainId = 1
-        tx.v = '0x01'
-        tx.s = '0x00'
-        tx.r = '0x00'
+                    return tx
 
+                }).catch(txError)
+            }).catch(txError)
+        }).catch(txError)
+    }).catch(txError)
+}
+
+const sendTx = (tx) => {
+    return prepTx(tx).then(tx => {
+        if (!tx) return null
         var rawTx = new EthereumTx(tx)
 
         return wallet.signTx(process.env.ETH_ADDRESS_INDEX, rawTx.serialize().toString('hex')).then(signature => {
@@ -47,54 +56,29 @@ const sendTx = (tx) => {
             rawTx.r = '0x' + signature.r
             rawTx.s = '0x' + signature.s
 
-            console.log(`Preparing to send transaction: ${JSON.stringify(rawTx, null, 2)}`)
-
             if (!rawTx.verifySignature()) {
-                console.log(`Error: signature is valid`)
-                return null
+                throw(`Error: signature is invalid for tx: ${JSON.stringify(rawTx, null, 2)}`)
             }
 
-            web3.eth.sendSignedTransaction('0x' + rawTx.serialize().toString('hex'))
-
-        }).catch((error) => {
-            console.log(`Error: ${error}`)
-        })
-    }).catch((error) => {
-        console.log(`Error: ${error}`)
-    })
-
-
-/*
-    return (getGasPrice().then((gasPrice) => {
-        tx.gasPrice = gasPrice
-        return (web3.eth.estimateGas(tx).then(gas=>{
-            tx.gas = gas * 2
-            return (web3.eth.personal.unlockAccount(tx.from, fs.readFileSync(`/run/secrets/${tx.from}`, 'utf8')).then( (result) => {
-                log(`Sending transaction: ${JSON.stringify(tx)}`)
-                // send the transaction
-                return new Promise((resolve, reject) => {
-                    var _hash
-                    return web3.eth.sendTransaction(tx).once('transactionHash', (hash) => {
-                        log(`Transaction Sent: ${hash}`)
-                        _hash = hash
-                    }).once('receipt',(receipt) => {
+            return new Promise((resolve, reject) => {
+                var hash
+                return web3.eth.sendSignedTransaction('0x' + rawTx.serialize().toString('hex'))
+                    .once('transactionHash', (_hash) => {
+                        hash = _hash
+                        console.log(`Transaction sent: ${hash}`)
+                    }).once('receipt', (reciept) => {
                         return resolve(receipt)
-                    }).catch((error) => {
-                        log(error)
-                        // Web3 throws error while waiting for reciept. So check manually
+                    }).catch(error => {
                         const wait = () => setTimeout(() => {
-                            web3.eth.getTransactionReceipt(_hash).then((receipt) => {
-                                if (receipt)
-                                    return resolve(receipt)
+                            web3.eth.getTransactionReceipt(hash).then(receipt => {
+                                if (receipt) return resolve(receipt)
                             }).catch(wait)
                         }, 5000)
                         return wait()
                     })
-                })
-            }).catch(die))
-        }).catch(die))
-    }).catch(die))
-*/
+            })
+        }).catch(txError)
+    }).catch(txError)
 }
 
 const getGasPrice = () => {
