@@ -28,7 +28,7 @@ const prepTx = (tx) => {
         return getGasPrice().then(gasPrice => {
             tx.gasPrice = gasPrice
             return web3.eth.estimateGas(tx).then(gas => {
-                tx.gas = String(gas * 1.5)
+                tx.gas = gas * 1.5
                 return web3.eth.getTransactionCount(tx.from).then(nonce => {
                     tx.nonce = nonce
                     console.log(`Preparing to sign transaction: ${JSON.stringify(tx, null, 2)}`)
@@ -52,6 +52,7 @@ const sendTx = (tx) => {
         var rawTx = new EthereumTx(tx)
 
         return wallet.signTx(process.env.ETH_ADDRESS_INDEX, rawTx.serialize().toString('hex')).then(signature => {
+            if (!signature) return txError('wallet.signTx failed, did not receive a signature')
             rawTx.v = '0x' + signature.v
             rawTx.r = '0x' + signature.r
             rawTx.s = '0x' + signature.s
@@ -62,13 +63,16 @@ const sendTx = (tx) => {
 
             return new Promise((resolve, reject) => {
                 var hash
+                console.log(`About to broadcast transaction ${rawTx}`)
                 return web3.eth.sendSignedTransaction('0x' + rawTx.serialize().toString('hex'))
                     .once('transactionHash', (_hash) => {
                         hash = _hash
                         console.log(`Transaction sent: ${hash}`)
                     }).once('receipt', (reciept) => {
+                        console.log(`receipt: ${JSON.stringify(receipt)}`)
                         return resolve(receipt)
                     }).catch(error => {
+                        console.log(`Error broadcasting transaction ${error}`)
                         const wait = () => setTimeout(() => {
                             web3.eth.getTransactionReceipt(hash).then(receipt => {
                                 if (receipt) return resolve(receipt)
