@@ -1,9 +1,10 @@
 const TransportNodeHid = require('@ledgerhq/hw-transport-node-hid').default
 const Eth = require('@ledgerhq/hw-app-eth').default
 
+const hdWalletPath = index => `44'/60'/${index}'/0/0`
+
 const ledgerError = (msg) => {
-    console.log('ledger error detected')
-    throw(msg)
+    throw(msg) // Bubble up to calling function's error handler
 }
 
 var ledgerDevice
@@ -15,9 +16,9 @@ const getLedgerDevice = () => {
     return ledgerDevice
 }
 
-const sign = (address_index, hexData, signFunction) => {
+const sign = (index, hexData, signFunction) => {
     return getLedgerDevice().then(ledgerDevice => {
-        return ledgerDevice[signFunction](`44'/60'/${address_index}'/0/0`, hexData).then(signature => {
+        return ledgerDevice[signFunction](hdWalletPath(index), hexData).then(signature => {
             return signature
         }).catch(ledgerError)
     }).catch(ledgerError)
@@ -26,20 +27,20 @@ const sign = (address_index, hexData, signFunction) => {
 // Define Exported Object
 const ledger = {}
 
-ledger.getAddress = (address_index) => {
+ledger.getAddress = (index) => {
     return getLedgerDevice().then(ledgerDevice => {
-        return ledgerDevice.getAddress(`44'/60'/${address_index}'/0/0`).then(address => {
+        return ledgerDevice.getAddress(hdWalletPath(index)).then(address => {
             return address.address
         }).catch(ledgerError)
     }).catch(ledgerError)
 }
 
-ledger.signTx = (address_index, hexTx) => {
-    return sign(address_index, hexTx, 'signTransaction')
+ledger.signTx = (index, hexTx) => {
+    return sign(index, hexTx, 'signTransaction')
 }
 
-ledger.signMsg = (address_index, hexMsg) => {
-    return sign(address_index, hexMsg, 'signPersonalMessage')
+ledger.signMsg = (index, hexMsg) => {
+    return sign(index, hexMsg, 'signPersonalMessage')
 }
 
 module.exports = ledger

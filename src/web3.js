@@ -1,6 +1,7 @@
 const Web3 = require('web3')
 
-const web3 = new Web3(new Web3.providers.WebsocketProvider(process.env.ETHPROVIDER))
+console.log(`Connecting to ${process.env.ETH_PROVIDER}`)
+const web3 = new Web3(new Web3.providers.WebsocketProvider(process.env.ETH_PROVIDER))
 
 web3.eth.getBlock('latest').then(response => {
     if (response.number) {
