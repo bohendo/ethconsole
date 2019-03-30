@@ -22,6 +22,6 @@ clean:
 ## Real Rules
 
 node-modules: package.json
-	yarn install
+	npm install
 	touch build/node-modules
 

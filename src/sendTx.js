@@ -42,6 +42,7 @@ const prepTx = (tx) => {
 
         return getGasPrice().then(gasPrice => {
             tx.gasPrice = gasPrice
+            console.log(JSON.stringify(tx, null, 2))
             return web3.eth.estimateGas(tx).then(gas => {
                 tx.gas = gas * 1.5
                 return web3.eth.getTransactionCount(tx.from).then(nonce => {
