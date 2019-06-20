@@ -1,11 +1,12 @@
 require("babel-polyfill")
+const eth = require('ethers')
 const web3 = require('./web3')
 const wallet = require('./wallet')
 const sendTx = require('./sendTx')
 
 global.wallet = wallet
 global.web3 = web3
-global.eth = web3.eth
+global.eth = eth
 global.sendTx = sendTx
 global.BN = web3.utils.BN
 
