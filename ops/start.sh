@@ -1,6 +1,6 @@
 #!/bin/bash
 
-root="`cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd`"
+root="`cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null && pwd`"
 
 if [[ -f "./$1" ]]
 then

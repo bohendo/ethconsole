@@ -1,10 +1,18 @@
 import * as eth from "ethers";
+
 import { ledger } from "./ledger";
+import { log, provider, wallet } from "./utils";
 
-const provider = new eth.providers.JsonRpcProvider(process.env.ETH_PROVIDER);
+import * as yearn from "./yearn";
 
-(global as any).eth = eth;
-(global as any).ledger = ledger;
-(global as any).log = (msg) => console.log(JSON.stringify(msg, undefined, 2));
-(global as any).provider = provider;
-(global as any).wallet = eth.Wallet.fromMnemonic('candy maple cake sugar pudding cream honey rich smooth crumble sweet treat').connect(provider);
+// Attach exported utils to global for easy access in the console
+const setGlobal = (key: string, value: any): void => {
+  (global as any)[key] = value;
+};
+
+setGlobal("yearn", yearn);
+setGlobal("eth", eth);
+setGlobal("ledger", ledger);
+setGlobal("log", log);
+setGlobal("provider", provider);
+setGlobal("wallet", wallet);
