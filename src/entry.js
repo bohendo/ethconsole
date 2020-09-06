@@ -1,14 +1,11 @@
-require("babel-polyfill")
 const eth = require('ethers')
-const web3 = require('./web3')
 const wallet = require('./wallet')
-const sendTx = require('./sendTx')
 
-global.wallet = wallet
-global.web3 = web3
+global.log = (msg) => console.log(JSON.stringify(msg, undefined, 20))
+
 global.eth = eth
-global.sendTx = sendTx
-global.BN = web3.utils.BN
+global.provider = new eth.providers.JsonRpcProvider(process.env.ETH_PROVIDER)
+global.wallet = eth.Wallet.fromMnemonic('candy maple cake sugar pudding cream honey rich smooth crumble sweet treat').connect(provider)
 
 if (process.env.ETH_SECRET_STORE) {
     console.log(`Setting secret store ${process.env.ETH_SECRET_STORE}`)
