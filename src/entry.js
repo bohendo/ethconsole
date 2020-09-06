@@ -1,3 +1,4 @@
+require("babel-polyfill")
 const eth = require('ethers')
 const wallet = require('./wallet')
 
