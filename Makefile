@@ -1,6 +1,7 @@
 ## Variables
 
-VPATH=src:ops:build
+VPATH=.flags # prerequisite search path
+$(shell mkdir -p $(VPATH))
 
 webpack=node_modules/.bin/webpack
 
@@ -10,15 +11,15 @@ $(shell mkdir -p build)
 
 ## Phony Rules
 
-all: bundle
+default: bundle
 
 clean:
-	rm -rf build/*
+	rm -rf build/* .flags/*
 
-bundle: node-modules
-	./node_modules/.bin/webpack --config ops/webpack.js
+bundle: node-modules ops/webpack.js tsconfig.json src/*.ts
+	tsc --project tsconfig.json
+	touch .flags/$@
 
 node-modules: package.json
 	npm install
-	touch build/node-modules
-
+	touch .flags/$@

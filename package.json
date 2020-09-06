@@ -7,17 +7,20 @@
   "author": "Bo Henderson <gitlab.com/bohendo> & Shivani Gupta <gitlab.com/shivgupt>",
   "license": "MIT",
   "dependencies": {
-    "@ledgerhq/hw-app-eth": "4.63.2",
-    "@ledgerhq/hw-transport-node-hid": "4.63.2",
-    "ethereumjs-tx": "2.0.0",
-    "ethers": "4.0.32"
+    "@ledgerhq/hw-app-eth": "5.22.0",
+    "@ledgerhq/hw-transport-node-hid": "5.22.0",
+    "ethereumjs-tx": "2.1.2",
+    "ethers": "5.0.10"
   },
   "devDependencies": {
-    "babel-core": "6.26.3",
-    "babel-loader": "7.1.2",
-    "babel-polyfill": "6.26.0",
+    "@babel/core": "7.11.6",
+    "@babel/polyfill": "7.11.5",
+    "@typescript-eslint/eslint-plugin": "3.8.0",
+    "@typescript-eslint/parser": "3.8.0",
+    "babel-loader": "8.1.0",
     "babel-preset-env": "1.7.0",
-    "webpack": "4.44.1",
-    "webpack-cli": "3.3.12"
+    "eslint": "7.6.0",
+    "ts-loader": "8.0.3",
+    "typescript": "4.0.2"
   }
 }

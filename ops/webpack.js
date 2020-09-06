@@ -6,8 +6,14 @@ module.exports = {
 
     externals: [],
 
+    resolve: {
+      extensions: ['.js', '.json', '.ts'],
+      mainFields: ["main", "module"],
+      symlinks: false,
+    },
+
     entry: { 
-      entry: './src/entry.js',
+      entry: './src/entry.ts',
     },
 
     output: {
@@ -18,19 +24,15 @@ module.exports = {
       libraryTarget: 'assign',
     },
 
-    resolve: {
-      extensions: ['.js', '.json']
-    },
-
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.ts$/,
           exclude: /node_modules/,
           use: {
-            loader: 'babel-loader',
+            loader: 'ts-loader',
             options: {
-              presets: ['env'],
+              configFile: path.join(__dirname, "../tsconfig.json"),
             },
           },
         },
