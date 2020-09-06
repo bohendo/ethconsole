@@ -1,6 +1,6 @@
 import { Contract, utils } from "ethers";
 
-import { log, provider } from "../utils";
+import { provider } from "../utils";
 
 import StrategyMKRVaultDAIDelegateAbi from "./StrategyMKRVaultDAIDelegate.json";
 import YearnGovernanceAbi from "./YearnGovernance.json";
