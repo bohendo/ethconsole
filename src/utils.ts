@@ -8,7 +8,7 @@ const env = {
 };
 
 if (env.ethProviderUrl) {
-  console.log(`Connecting to provider ${env.ethProviderUrl.split('/').splice(0, 3).join('/'}`);
+  console.log(`Connecting to provider ${env.ethProviderUrl.split("/").splice(0, 3).join("/")}`);
 } else {
   console.warn("Connecting to default provider");
 }
@@ -19,6 +19,8 @@ export const provider = env.ethProviderUrl
 
 
 export const wallet = Wallet.fromMnemonic(env.mnemonic).connect(provider);
+
+export const toHumanReadable = (abi: any) => (new utils.Interface(abi)).format();
 
 export const log = (msg: any) => {
   const prefix = `\n`;
