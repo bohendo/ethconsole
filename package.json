@@ -7,8 +7,7 @@
   "author": "Bo Henderson <gitlab.com/bohendo> & Shivani Gupta <gitlab.com/shivgupt>",
   "license": "MIT",
   "dependencies": {
-    "@ledgerhq/hw-app-eth": "5.22.0",
-    "@ledgerhq/hw-transport-node-hid": "5.22.0",
+    "@ethersproject/hardware-wallets": "5.0.8",
     "ethereumjs-tx": "2.1.2",
     "ethers": "5.0.10"
   },
