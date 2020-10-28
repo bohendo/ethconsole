@@ -3,6 +3,7 @@ import * as eth from "ethers";
 import { ledger, getLedgerSigner } from "./ledger";
 import { log, provider, wallet, toHumanReadable } from "./utils";
 
+import { usdc } from "./tokens";
 import * as maker from "./maker";
 import * as yearn from "./yearn";
 
@@ -13,6 +14,7 @@ const setGlobal = (key: string, value: any): void => {
 
 setGlobal("maker", maker);
 setGlobal("yearn", yearn);
+setGlobal("usdc", usdc);
 
 setGlobal("toHumanReadable", toHumanReadable);
 setGlobal("eth", eth);
