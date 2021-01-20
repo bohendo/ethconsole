@@ -11,6 +11,7 @@
 docker-compose.yml
 
 # Cache
+**/.node_repl_history
 **/.bot-store
 **/.buidler
 **/.cache

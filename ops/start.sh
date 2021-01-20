@@ -1,10 +1,21 @@
 #!/bin/bash
 
-root="`cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null && pwd`"
+root=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null 2>&1 && pwd )
+project=$(grep -m 1 '"name":' "$root/package.json" | cut -d '"' -f 4)
 
 if [[ -f "./$1" ]]
-then
-    node --no-deprecation --interactive --require $root/build/entry.js --require ./$1
-else
-    node --no-deprecation --interactive --require $root/build/entry.js
+then arg="--require ./$1"
 fi
+
+if [[ "$(uname)" == "Darwin" ]]
+then id=0:0
+else id="$(id -u):$(id -g)"
+fi
+
+docker run \
+  --interactive \
+  --name=ethconsole \
+  --rm \
+  --tty \
+  --volume="$root:/root" \
+  "${project}_builder" "$id" "node --no-deprecation --interactive --require /root/build/entry.js $arg"

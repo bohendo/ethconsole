@@ -50,13 +50,12 @@ builder: $(shell find ops/builder $(find_options))
 	docker tag ${project}_builder ${project}_builder:$(commit)
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
-js: node-modules tsconfig.json $(shell find src $(find_options))
-	$(log_start)
-	$(docker_run) "tsc --project tsconfig.json"
-	$(log_finish) && mv -f $(totalTime) .flags/$@
-
 node-modules: builder package.json
 	$(log_start)
 	$(docker_run) "npm install"
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
+js: node-modules tsconfig.json $(shell find src $(find_options))
+	$(log_start)
+	$(docker_run) "tsc --project tsconfig.json"
+	$(log_finish) && mv -f $(totalTime) .flags/$@
