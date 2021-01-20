@@ -3,20 +3,22 @@ import * as eth from "ethers";
 import { ledger, getLedgerSigner } from "./ledger";
 import { log, provider, wallet, toHumanReadable } from "./utils";
 
-import { usdc } from "./tokens";
+import * as eth2 from "./eth2";
 import * as maker from "./maker";
-import * as yearn from "./yearn";
+import { usdc } from "./tokens";
 import * as tornado from "./tornado";
+import * as yearn from "./yearn";
 
 // Attach exported utils to global for easy access in the console
 const setGlobal = (key: string, value: any): void => {
   (global as any)[key] = value;
 };
 
-setGlobal("tornado", tornado);
+setGlobal("eth2", eth2);
 setGlobal("maker", maker);
-setGlobal("yearn", yearn);
+setGlobal("tornado", tornado);
 setGlobal("usdc", usdc);
+setGlobal("yearn", yearn);
 
 setGlobal("toHumanReadable", toHumanReadable);
 setGlobal("eth", eth);

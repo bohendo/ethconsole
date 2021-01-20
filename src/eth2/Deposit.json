@@ -1,0 +1,9 @@
+[
+  "constructor()",
+  "event DepositEvent(bytes pubkey, bytes withdrawal_credentials, bytes amount, bytes signature, bytes index)",
+  "function deposit(bytes pubkey, bytes withdrawal_credentials, bytes signature, bytes32 deposit_data_root) payable",
+  "function get_deposit_count() view returns (bytes)",
+  "function get_deposit_root() view returns (bytes32)",
+  "function supportsInterface(bytes4 interfaceId) pure returns (bool)"
+]
+
