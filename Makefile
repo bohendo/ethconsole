@@ -30,9 +30,9 @@ log_finish=@echo $$((`date "+%s"` - `cat $(startTime)`)) > $(totalTime); rm $(st
 ########################################
 ## Command/control rules
 
-default: bundle
+default: js
 
-start: bundle
+start: js
 	bash ops/start.sh
 
 clean:
@@ -47,7 +47,7 @@ builder: $(shell find ops/builder $(find_options))
 	docker tag ${project}_builder ${project}_builder:$(commit)
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
-bundle: node-modules tsconfig.json $(shell find src $(find_options))
+js: node-modules tsconfig.json $(shell find src $(find_options))
 	$(log_start)
 	$(docker_run) "tsc --project tsconfig.json"
 	$(log_finish) && mv -f $(totalTime) .flags/$@
