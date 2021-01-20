@@ -36,7 +36,10 @@ start: js
 	bash ops/start.sh
 
 clean:
-	rm -rf build/* .flags/*
+	rm -rf build .flags
+
+purge: clean
+	rm -rf .cache .config node_modules .npm
 
 ########################################
 ## Build Rules
