@@ -13,6 +13,8 @@ else id="$(id -u):$(id -g)"
 fi
 
 docker run \
+  --env="ETH_PROVIDER=${ETH_PROVIDER}" \
+  --env="ETH_MNEMONIC=${ETH_MNEMONIC}" \
   --interactive \
   --name=ethconsole \
   --rm \
