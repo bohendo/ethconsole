@@ -39,7 +39,10 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      accounts: { mnemonic },
+      accounts: {
+        accountsBalance: "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        mnemonic,
+      },
       chainId,
       loggingEnabled: false,
       saveDeployments: false,

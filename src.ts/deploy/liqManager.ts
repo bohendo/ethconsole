@@ -75,7 +75,7 @@ const func: DeployFunction = async () => {
     }
 
     const WETH = await (ethers as any).getContract("WETH");
-    await (await WETH.deposit({ value: parseEther("100") })).wait();
+    await (await WETH.deposit({ value: parseEther("100000") })).wait();
     log.info(`Deposited a bunch of ETH to generate ${await WETH.balanceOf(deployer)} WETH`);
 
     for (const [name, price] of [
@@ -92,8 +92,8 @@ const func: DeployFunction = async () => {
         signerAddress: deployer,
         tokenA: WETH.address,
         tokenB: token.address,
-        amountA: "1",
-        amountB: price,
+        amountA: "10000",
+        amountB: formatEther(parseEther(price).mul(10000)),
         logLevel: defaultLogLevel,
       });
     }
