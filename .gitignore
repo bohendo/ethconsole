@@ -26,6 +26,7 @@ docker-compose.yml
 **/.rpt2_cache
 **/.test-store
 **/cache/**
+.migration-complete
 
 # Data Storage
 **/.bot-store/

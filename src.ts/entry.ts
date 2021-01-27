@@ -1,7 +1,7 @@
 import * as eth from "ethers";
 
 import { ledger, getLedgerSigner } from "./ledger";
-import { log, provider, wallet, toHumanReadable } from "./utils";
+import { log, provider, sqrt, wallet, toHumanReadable } from "./utils";
 
 import * as eth2 from "./eth2";
 import * as maker from "./maker";
@@ -22,10 +22,12 @@ setGlobal("usdc", usdc);
 setGlobal("uniswap", uniswap);
 setGlobal("yearn", yearn);
 
-setGlobal("toHumanReadable", toHumanReadable);
+setGlobal("BN", eth.BigNumber.from);
 setGlobal("eth", eth);
-setGlobal("ledger", ledger);
 setGlobal("getLedgerSigner", getLedgerSigner);
+setGlobal("ledger", ledger);
 setGlobal("log", log);
 setGlobal("provider", provider);
+setGlobal("sqrt", sqrt);
+setGlobal("toHumanReadable", toHumanReadable);
 setGlobal("wallet", wallet);

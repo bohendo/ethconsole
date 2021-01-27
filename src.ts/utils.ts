@@ -1,4 +1,4 @@
-import { getDefaultProvider, providers, utils, Wallet } from "ethers";
+import { BigNumber, getDefaultProvider, providers, utils, Wallet } from "ethers";
 
 const env = {
   ethProviderUrl: process?.env?.ETH_PROVIDER || undefined,
@@ -33,4 +33,19 @@ export const log = (msg: any) => {
       console.log(prefix + JSON.stringify(msg, undefined, 2))
     }
   }
+}
+
+export const sqrt = (n: BigNumber): BigNumber => {
+  let z
+  if (n.gt(BigNumber.from(3))) {
+    z = n;
+    let x = n.div(2).add(1);
+    while (x.lt(z)) {
+      z = x;
+      x = (n.div(x).add(x)).div(2);
+    }
+  } else if (!n.eq(0)) {
+    z = BigNumber.from(1);
+  }
+  return z;
 }

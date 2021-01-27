@@ -15,10 +15,10 @@ bash ops/search.sh "$old" | sed "s|$old|$new|g" | grep --color=always "$new"
 echo
 echo "Does the above replacement look good? (y/n)"
 echo -n "> "
-read response
+read -r response
 echo
 
 if [[ "$response" == "y" ]]
-then find Makefile ops src -type f -not -name "*.swp" -exec sed -i "s|$old|$new|g" {} \;
+then find Makefile ops src.ts src.sol -type f -not -name "*.swp" -exec sed -i "s|$old|$new|g" {} \;
 else echo "Goodbye"
 fi

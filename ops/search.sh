@@ -10,4 +10,5 @@ fi
 grep "$@" --exclude=*.swp --exclude=*.pdf --color=auto -r "$target" \
   Makefile \
   ops \
-  src \
+  src.sol \
+  src.ts

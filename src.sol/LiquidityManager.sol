@@ -2,9 +2,9 @@
 
 pragma solidity ^0.7.0;
 
-import "../interfaces/IWETH.sol";
-import "../interfaces/IUniV2Router.sol";
-import "../lib/SafeMath.sol";
+import "./interfaces/IWETH.sol";
+import "./interfaces/IUniV2Router.sol";
+import "./lib/SafeMath.sol";
 
 contract LiquidityManager {
     using SafeMath for uint;
