@@ -7,6 +7,7 @@ import * as eth2 from "./eth2";
 import * as maker from "./maker";
 import { usdc } from "./tokens";
 import * as tornado from "./tornado";
+import * as uniswap from "./uniswap";
 import * as yearn from "./yearn";
 
 // Attach exported utils to global for easy access in the console
@@ -18,6 +19,7 @@ setGlobal("eth2", eth2);
 setGlobal("maker", maker);
 setGlobal("tornado", tornado);
 setGlobal("usdc", usdc);
+setGlobal("uniswap", uniswap);
 setGlobal("yearn", yearn);
 
 setGlobal("toHumanReadable", toHumanReadable);
