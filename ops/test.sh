@@ -10,17 +10,13 @@ docker network create --attachable --driver overlay "$project" 2> /dev/null || t
 
 cmd=${1:-test}
 
-# If file descriptors 0-2 exist, then we're prob running via interactive shell instead of on CD/CI
-if [[ -t 0 && -t 1 && -t 2 ]]
-then interactive="--interactive --tty"
-else echo "Running in non-interactive mode"
-fi
-
-docker run "$interactive" \
+docker run \
   --entrypoint="bash" \
+  --interactive \
   --name="${project}_${cmd}" \
   --network "$project" \
   --rm \
   --tmpfs="/tmp" \
+  --tty \
   --volume="$root:/root" \
   "${project}_builder" "/test.sh" "$cmd"

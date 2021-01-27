@@ -49,6 +49,15 @@ purge: clean
 	rm -rf .cache .config node_modules .npm
 
 ########################################
+## Tests
+
+test: transpiled-ts
+	bash ops/test.sh test
+
+watch:
+	bash ops/test.sh watch
+
+########################################
 ## Build Rules
 
 builder: $(shell find ops/builder $(find_options))

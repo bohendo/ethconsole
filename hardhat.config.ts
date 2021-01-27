@@ -16,7 +16,7 @@ const mnemonic =
 const config: HardhatUserConfig = {
   paths: {
     artifacts: "./artifacts",
-    deploy: "./deploy",
+    deploy: "./src.ts/deploy",
     deployments: "./deployments",
     sources: "./src.sol",
     tests: "./src.ts",
