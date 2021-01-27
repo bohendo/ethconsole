@@ -16,13 +16,18 @@ library UniswapLibrary {
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
+    // If the factory code ever changes, then the code hash here needs to be updated
+    // Add something like this to the pair contract to determine the new init code hash:
+    //   bytes public constant pairCreationCode = type(UniswapPair).creationCode;
+    // Then print from JS/TS:
+    //   ethers.utils.keccak256(await factory.pairCreationCode())
     function pairFor(address factory, address tokenA, address tokenB) internal pure returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(uint160(uint256(keccak256(abi.encodePacked(
                 hex"ff",
                 factory,
                 keccak256(abi.encodePacked(token0, token1)),
-                hex"7ed3a52aa09706c496d8237b94e865236c2b45aa64dbbe2692a62fa59cd14365" // init code hash
+                hex"047015000d4ed19c3543be2b95ef205846447205d748216ee4086bc5c807edab" // init code hash
             )))));
     }
 

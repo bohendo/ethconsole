@@ -1,10 +1,10 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, EtherSymbol, Zero } from "@ethersproject/constants";
-import { formatEther } from "@ethersproject/units";
-import { deployments, ethers, getNamedAccounts, getChainId, network } from "hardhat";
+import { formatEther, parseEther } from "@ethersproject/units";
+import { deployments, ethers, getNamedAccounts, getChainId, network, run } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 
-import { logger } from "../constants";
+import { defaultLogLevel, logger } from "../constants";
 
 const func: DeployFunction = async () => {
   const log = logger.child({ module: "Deploy" });
@@ -74,7 +74,32 @@ const func: DeployFunction = async () => {
       await migrate(name, args);
     }
 
-  // Don't migrate to mainnet until audit is finished
+    const WETH = await (ethers as any).getContract("WETH");
+    await (await WETH.deposit({ value: parseEther("100") })).wait();
+    log.info(`Deposited a bunch of ETH to generate ${await WETH.balanceOf(deployer)} WETH`);
+
+    for (const [name, price] of [
+      ["FakeAAVE", "4.5"],
+      ["FakeCOMP", "5.6"],
+      ["FakeMKR", "0.95"],
+      ["FakeUNI", "91.1"],
+      ["FakeWBTC", "0.041"],
+      ["FakeYFI", "0.045"],
+    ]) {
+      const token = await (ethers as any).getContract(name);
+      log.info(`Creating uniswap pair for ${name}`);
+      await run("create-uni-pair", {
+        signerAddress: deployer,
+        tokenA: WETH.address,
+        tokenB: token.address,
+        amountA: "1",
+        amountB: price,
+        logLevel: defaultLogLevel,
+      });
+    }
+
+
+  // Don't migrate to mainnet until development is finished
   } else if (chainId === "1") {
     log.info(`Running mainnet migration`);
     throw new Error(`Contract migration for chain ${chainId} is not supported yet`);
@@ -82,7 +107,9 @@ const func: DeployFunction = async () => {
   // Misc Testnet: run standard migration
   } else {
     log.info(`Running testnet migration`);
-    for (const row of [["LiquidityManager", []]]) {
+    for (const row of [
+      ["LiquidityManager", []]
+    ]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;
       await migrate(name, args);

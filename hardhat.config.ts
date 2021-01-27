@@ -4,7 +4,7 @@ import "hardhat-deploy-ethers";
 import { HardhatUserConfig } from "hardhat/types";
 
 import * as packageJson from "./package.json";
-// import "./src.ts/tasks";
+import "./src.ts/tasks";
 
 const urlOverride = process.env.ETH_PROVIDER_URL;
 const chainId = parseInt(process.env.CHAIN_ID ?? "1337", 10);

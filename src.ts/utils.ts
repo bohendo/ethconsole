@@ -1,5 +1,7 @@
 import { BigNumber, getDefaultProvider, providers, utils, Wallet } from "ethers";
 
+import { alice, bob, defaultLogLevel } from "./constants";
+
 const env = {
   ethProviderUrl: process?.env?.ETH_PROVIDER || undefined,
   mnemonic:

@@ -3,7 +3,6 @@
 pragma solidity ^0.7.0;
 
 import "../interfaces/IUniswapFactory.sol";
-
 import "./pair.sol";
 
 contract UniswapFactory is IUniswapFactory {
