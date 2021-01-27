@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
  * Anybody can mint as many tokens as they like
  * Anybody can burn anyone else's tokens
  */
-contract TestToken is ERC20 {
-    constructor() ERC20("Test Token", "TEST") {
+contract FakeToken is ERC20 {
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) {
         _mint(msg.sender, 1000000 ether);
     }
 

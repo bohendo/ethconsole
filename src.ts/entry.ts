@@ -18,8 +18,8 @@ const setGlobal = (key: string, value: any): void => {
 setGlobal("eth2", eth2);
 setGlobal("maker", maker);
 setGlobal("tornado", tornado);
-setGlobal("usdc", usdc);
 setGlobal("uniswap", uniswap);
+setGlobal("usdc", usdc);
 setGlobal("yearn", yearn);
 
 setGlobal("BN", eth.BigNumber.from);

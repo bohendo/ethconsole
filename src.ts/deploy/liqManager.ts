@@ -54,10 +54,6 @@ const func: DeployFunction = async () => {
     );
   };
 
-  const standardMigration = [
-    ["LiquidityManager", []],
-  ];
-
   // Only deploy test fixtures during hardhat tests
   if (network.name === "hardhat") {
     log.info(`Running localnet migration`);
@@ -65,23 +61,28 @@ const func: DeployFunction = async () => {
       ["WETH", []],
       ["UniswapFactory", [AddressZero]],
       ["UniswapRouter", ["UniswapFactory", "WETH"]],
-      ["TestToken", []],
-      ...standardMigration,
+      ["FakeAAVE", []],
+      ["FakeCOMP", []],
+      ["FakeMKR", []],
+      ["FakeUNI", []],
+      ["FakeWBTC", []],
+      ["FakeYFI", []],
+      ["LiquidityManager", []],
     ]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;
       await migrate(name, args);
     }
 
-    // Don't migrate to mainnet until audit is finished
+  // Don't migrate to mainnet until audit is finished
   } else if (chainId === "1") {
     log.info(`Running mainnet migration`);
     throw new Error(`Contract migration for chain ${chainId} is not supported yet`);
 
-    // Default: run standard migration
+  // Misc Testnet: run standard migration
   } else {
     log.info(`Running testnet migration`);
-    for (const row of standardMigration) {
+    for (const row of [["LiquidityManager", []]]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;
       await migrate(name, args);
