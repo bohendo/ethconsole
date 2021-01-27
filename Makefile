@@ -30,9 +30,9 @@ log_finish=@echo $$((`date "+%s"` - `cat $(startTime)`)) > $(totalTime); rm $(st
 ########################################
 ## Command/control rules
 
-default: js
+default: ethprovider
 
-start: js
+start: transpiled-ts
 	bash ops/start.sh
 
 start-ethprovider:
@@ -62,12 +62,17 @@ node-modules: package.json
 	npm install
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
-js: builder node-modules tsconfig.json $(shell find src.ts $(find_options))
+compiled-sol: builder node-modules hardhat.config.ts $(shell find src.sol $(find_options))
 	$(log_start)
-	$(docker_run) "tsc --project tsconfig.json"
+	$(docker_run) "npm run compile"
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
-ethprovider: js $(shell find ops/ethprovider $(find_options))
+transpiled-ts: builder node-modules compiled-sol $(shell find src.ts $(find_options))
+	$(log_start)
+	$(docker_run) "npm run transpile"
+	$(log_finish) && mv -f $(totalTime) .flags/$@
+
+ethprovider: transpiled-ts $(shell find ops/ethprovider $(find_options))
 	$(log_start)
 	docker build --file ops/ethprovider/Dockerfile --tag $(project)_ethprovider ops/ethprovider
 	docker tag ${project}_ethprovider ${project}_ethprovider:$(commit)

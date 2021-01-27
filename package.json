@@ -6,12 +6,25 @@
   "repository": "git@gitlab.com:bohendo/ethconsole.git",
   "author": "Bo Henderson <gitlab.com/bohendo> & Shivani Gupta <gitlab.com/shivgupt>",
   "license": "MIT",
+  "scripts": {
+    "compile": "hardhat compile",
+    "transpile": "rm -rf dist/* && tsc -p tsconfig.json"
+  },
   "dependencies": {
     "@ethersproject/hardware-wallets": "5.0.12",
-    "ethers": "5.0.26"
+    "ethers": "5.0.26",
+    "hardhat": "2.0.5",
+    "hardhat-deploy": "0.7.0-beta.37",
+    "hardhat-deploy-ethers": "0.3.0-beta.7"
   },
   "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "2.0.0",
+    "@nomiclabs/hardhat-waffle": "2.0.0",
     "@types/node": "14.14.22",
+    "ethereum-waffle": "3.1.2",
+    "solc": "0.7.1",
+    "solhint": "3.3.1",
+    "ts-node": "9.0.0",
     "typescript": "4.1.3"
   }
 }
