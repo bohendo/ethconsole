@@ -35,6 +35,13 @@ default: js
 start: js
 	bash ops/start.sh
 
+start-ethprovider:
+	bash ops/start-ethprovider.sh
+restart-ethprovider: stop-ethprovider
+	bash ops/start-ethprovider.sh
+stop-ethprovider:
+	bash ops/stop.sh ethprovider
+
 clean:
 	rm -rf build .flags
 
@@ -58,4 +65,10 @@ node-modules: package.json
 js: builder node-modules tsconfig.json $(shell find src $(find_options))
 	$(log_start)
 	$(docker_run) "tsc --project tsconfig.json"
+	$(log_finish) && mv -f $(totalTime) .flags/$@
+
+ethprovider: js $(shell find ops/ethprovider $(find_options))
+	$(log_start)
+	docker build --file ops/ethprovider/Dockerfile --tag $(project)_ethprovider ops/ethprovider
+	docker tag ${project}_ethprovider ${project}_ethprovider:$(commit)
 	$(log_finish) && mv -f $(totalTime) .flags/$@

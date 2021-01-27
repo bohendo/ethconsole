@@ -22,12 +22,12 @@ setGlobal("usdc", usdc);
 setGlobal("uniswap", uniswap);
 setGlobal("yearn", yearn);
 
-setGlobal("toHumanReadable", toHumanReadable);
-setGlobal("eth", eth);
 setGlobal("BN", eth.BigNumber.from);
-setGlobal("ledger", ledger);
-setGlobal("sqrt", sqrt);
+setGlobal("eth", eth);
 setGlobal("getLedgerSigner", getLedgerSigner);
+setGlobal("ledger", ledger);
 setGlobal("log", log);
 setGlobal("provider", provider);
+setGlobal("sqrt", sqrt);
+setGlobal("toHumanReadable", toHumanReadable);
 setGlobal("wallet", wallet);
