@@ -62,7 +62,7 @@ node-modules: package.json
 	npm install
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
-js: builder node-modules tsconfig.json $(shell find src $(find_options))
+js: builder node-modules tsconfig.json $(shell find src.ts $(find_options))
 	$(log_start)
 	$(docker_run) "tsc --project tsconfig.json"
 	$(log_finish) && mv -f $(totalTime) .flags/$@
