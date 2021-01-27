@@ -12,7 +12,7 @@ then
   set -o pipefail
   echo "Starting tester"
   if [[ -n "$(command -v pino-pretty)" ]]
-  then exec npm run test -- $opts | pino-pretty --colorize
+  then exec npm run test -- $opts | pino-pretty --colorize --ignore module,pid,hostname
   else exec npm run test -- $opts
   fi
 
@@ -52,7 +52,7 @@ then
 
       prev_checksum="$(find "${src[@]}" -type f -not -name "*.swp" -exec sha256sum {} \; | sha256sum)"
       if [[ -n "$(command -v pino-pretty)" ]]
-      then (npm run test -- $opts | pino-pretty --colorize &)
+      then (npm run test -- $opts | pino-pretty --colorize --ignore module,pid,hostname &)
       else (npm run test -- $opts &)
       fi
 

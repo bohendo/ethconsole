@@ -26,6 +26,6 @@
     "target": "es2017",
     "typeRoots": ["./node_modules/@types"]
   },
-  "exclude": ["build", "node_modules", "**/*spec.ts"],
+  "exclude": ["build", "node_modules"],
   "include": ["hardhat.config.ts", "src.ts/**/*.ts"]
 }

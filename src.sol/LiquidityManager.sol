@@ -5,5 +5,5 @@ pragma experimental ABIEncoderV2;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract LiquidityManager is Ownable {
-  constructor(uint s) {}
+  constructor() {}
 }

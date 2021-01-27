@@ -1,5 +1,5 @@
 import { BigNumber } from "@ethersproject/bignumber";
-import { EtherSymbol, Zero } from "@ethersproject/constants";
+import { AddressZero, EtherSymbol, Zero } from "@ethersproject/constants";
 import { formatEther } from "@ethersproject/units";
 import { deployments, ethers, getNamedAccounts, getChainId, network } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
@@ -62,11 +62,11 @@ const func: DeployFunction = async () => {
   if (network.name === "hardhat") {
     log.info(`Running localnet migration`);
     for (const row of [
-      ...standardMigration,
       ["WETH", []],
-      ["UniswapFactory", []],
+      ["UniswapFactory", [AddressZero]],
       ["UniswapRouter", ["UniswapFactory", "WETH"]],
       ["TestToken", []],
+      ...standardMigration,
     ]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;
