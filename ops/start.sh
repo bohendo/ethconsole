@@ -7,6 +7,10 @@ if [[ -f "./$1" ]]
 then arg="--require ./$1"
 fi
 
+node --no-deprecation --interactive --require $root/build/entry.js "$arg"
+
+exit # Don't use docker until/unless we figure out how usb connections work
+
 if [[ "$(uname)" == "Darwin" ]]
 then id=0:0
 else id="$(id -u):$(id -g)"
