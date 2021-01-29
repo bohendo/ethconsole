@@ -15,7 +15,7 @@ const func: DeployFunction = async () => {
   // Log initial state
   const balance = await provider.getBalance(deployer);
   const nonce = await provider.getTransactionCount(deployer);
-  log.info(`Preparing to deploy LiquidityManager to chain ${chainId}`);
+  log.info(`Preparing to deploy Uniswap & seed liquidity on chain ${chainId}`);
   log.info(`Deployer address=${deployer} nonce=${nonce} balance=${formatEther(balance)}`);
 
   if (balance.eq(Zero)) {
@@ -54,7 +54,7 @@ const func: DeployFunction = async () => {
     );
   };
 
-  // Only deploy test fixtures during hardhat tests
+  // Only deploy uniswap on a local network
   if (network.name === "hardhat") {
     log.info(`Running localnet migration`);
     for (const row of [
@@ -67,7 +67,6 @@ const func: DeployFunction = async () => {
       ["FakeUNI", []],
       ["FakeWBTC", []],
       ["FakeYFI", []],
-      ["LiquidityManager", []],
     ]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;
@@ -98,22 +97,9 @@ const func: DeployFunction = async () => {
       });
     }
 
-
-  // Don't migrate to mainnet until development is finished
-  } else if (chainId === "1") {
-    log.info(`Running mainnet migration`);
-    throw new Error(`Contract migration for chain ${chainId} is not supported yet`);
-
-  // Misc Testnet: run standard migration
+  // Don't run these migrations on mainnet or public testnets
   } else {
-    log.info(`Running testnet migration`);
-    for (const row of [
-      ["LiquidityManager", []]
-    ]) {
-      const name = row[0] as string;
-      const args = row[1] as Array<string | BigNumber>;
-      await migrate(name, args);
-    }
+    throw new Error(`Uniswap deployment to chain ${chainId} is not supported`);
   }
 
   ////////////////////////////////////////
