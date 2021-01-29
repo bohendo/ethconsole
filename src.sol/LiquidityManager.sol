@@ -10,6 +10,8 @@ import "./lib/SafeMath.sol";
 import "./lib/Math.sol";
 import "./lib/TransferHelper.sol";
 
+import "./uniswap/library.sol";
+
 contract LiquidityManager {
     using SafeMath for uint;
     uint ratioConstant = 100000;
@@ -41,8 +43,8 @@ contract LiquidityManager {
             uint tokenReserve;
             uint lastTimeStamp;
             address tokenAddress;
+            uint tokenAmountOut;
 
-            //IWETH(_WETH).approve(pairs[i], type(uint256).max);
             TransferHelper.safeApprove(_WETH, pairs[i], type(uint256).max);
 
             // Total value to be invested in pair i
@@ -54,23 +56,33 @@ contract LiquidityManager {
                 (wethReserve, tokenReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
                 _safetyCheckForPoolRatio(safetyRatios[i], wethReserve, tokenReserve);
                 n = _exactSwapAmount(wethReserve, s);
-                IUniswapPair(pairs[i]).swap(0, n, msg.sender, new bytes(0));
-                //IERC20(IUniswapPair(pairs[i]).token1()).approve(pairs[i], type(uint256).max);
+
+                // Transfer weth for swap
+                TransferHelper.safeTransfer(_WETH, pairs[i], n);
+
+                tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
+
+                IUniswapPair(pairs[i]).swap(0, tokenAmountOut, address(this), new bytes(0));
                 tokenAddress = IUniswapPair(pairs[i]).token1();
                 TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
             } else {
                 (tokenReserve, wethReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
                 _safetyCheckForPoolRatio(safetyRatios[i], wethReserve, tokenReserve);
                 n = _exactSwapAmount(wethReserve, s);
-                IUniswapPair(pairs[i]).swap(n, 0, msg.sender, new bytes(0));
-                //IERC20(IUniswapPair(pairs[i]).token0()).approve(pairs[i], type(uint256).max);
+
+                // Transfer weth for swap
+                TransferHelper.safeTransfer(_WETH, pairs[i], n);
+
+                tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
+
+                IUniswapPair(pairs[i]).swap(tokenAmountOut, 0, address(this), new bytes(0));
                 tokenAddress = IUniswapPair(pairs[i]).token0();
                 TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
             }
 
             // add liquidity
-            TransferHelper.safeTransferFrom(_WETH, address(this), pairs[i], s-n);
-            TransferHelper.safeTransferFrom(tokenAddress, address(this), pairs[i], n);
+            TransferHelper.safeTransfer(_WETH, pairs[i], s-n);
+            TransferHelper.safeTransfer(tokenAddress, pairs[i], tokenAmountOut);
             IUniswapPair(pairs[i]).mint(msg.sender);
         }
 
