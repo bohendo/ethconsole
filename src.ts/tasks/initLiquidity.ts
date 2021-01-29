@@ -1,5 +1,5 @@
 import { AddressZero, EtherSymbol } from "@ethersproject/constants";
-import { parseEther } from "@ethersproject/units";
+import { formatEther, parseEther } from "@ethersproject/units";
 import { utils } from "ethers";
 import { task, types } from "hardhat/config";
 import pino from "pino";
@@ -48,12 +48,13 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
         allocations,
         safetyRatios,
       ],
+      value: parseEther(amount),
     });
 
     const tx = await hre.ethers.provider.getTransaction(deployment.transactionHash!);
     const receipt = await hre.ethers.provider.getTransactionReceipt(deployment.transactionHash!);
 
-    console.log(`Spent ${receipt.gasUsed} worth ${receipt.gasUsed.mul(tx.gasPrice)} ${EtherSymbol}`);
+    log.info(`Spent ${receipt.gasUsed} worth ${formatEther(receipt.gasUsed.mul(tx.gasPrice))} ${EtherSymbol}`);
 
   });
 

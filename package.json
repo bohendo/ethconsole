@@ -9,7 +9,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "transpile": "rm -rf dist/* && tsc -p tsconfig.json",
-    "test": "mocha --exit --require ts-node/register --require hardhat/register --timeout 60000 'src.ts/**/*.spec.ts'"
+    "test": "hardhat test"
   },
   "dependencies": {
     "@ethersproject/bignumber": "5.0.12",

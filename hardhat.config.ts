@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
     deploy: "./src.ts/deploy",
     deployments: "./deployments",
     sources: "./src.sol",
-    tests: "./src.ts",
+    tests: "./src.ts/tests",
   },
   solidity: {
     version: packageJson.devDependencies.solc,
