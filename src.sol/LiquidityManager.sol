@@ -8,10 +8,12 @@ import "./interfaces/IUniswapRouter.sol";
 import "./interfaces/IUniswapPair.sol";
 import "./lib/SafeMath.sol";
 import "./lib/Math.sol";
+import "./lib/TransferHelper.sol";
 
 contract LiquidityManager {
     using SafeMath for uint;
     uint ratioConstant = 100000;
+
 
     /*
     address WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
@@ -38,40 +40,57 @@ contract LiquidityManager {
             uint wethReserve;
             uint tokenReserve;
             uint lastTimeStamp;
-            bool token0isWeth;
+            address tokenAddress;
+
+            //IWETH(_WETH).approve(pairs[i], type(uint256).max);
+            TransferHelper.safeApprove(_WETH, pairs[i], type(uint256).max);
 
             // Total value to be invested in pair i
             uint s = investRatios[i].mul(msg.value);
+            uint n;
 
-            // get Token and WETH reserves
+            // swap weth for token
             if ( IUniswapPair(pairs[i]).token0() == _WETH) {
                 (wethReserve, tokenReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
-                token0isWeth = true;
+                _safetyCheckForPoolRatio(safetyRatios[i], wethReserve, tokenReserve);
+                n = _exactSwapAmount(wethReserve, s);
+                IUniswapPair(pairs[i]).swap(0, n, msg.sender, new bytes(0));
+                //IERC20(IUniswapPair(pairs[i]).token1()).approve(pairs[i], type(uint256).max);
+                tokenAddress = IUniswapPair(pairs[i]).token1();
+                TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
             } else {
                 (tokenReserve, wethReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
-                token0isWeth = false;
-            }
-
-            uint minRatio = safetyRatios[i].mul(99).div(100);
-            uint maxRatio = safetyRatios[i].mul(101).div(100);
-            uint currentRatio = wethReserve.mul(ratioConstant).div(tokenReserve);
-            require(currentRatio >= minRatio);
-            require(currentRatio <= maxRatio);
-
-            uint b = wethReserve.mul(1997);
-            uint c = wethReserve.mul(3988000).mul(s);
-            uint a = wethReserve.mul(wethReserve).mul(3988009);
-
-
-            uint n = ((Math.sqrt(a.add(c))).sub(b)).div(1994);
-
-            // Swap weth for tokens
-            if (token0isWeth) {
-                IUniswapPair(pairs[i]).swap(0, n, msg.sender, new bytes(0));
-            } else {
+                _safetyCheckForPoolRatio(safetyRatios[i], wethReserve, tokenReserve);
+                n = _exactSwapAmount(wethReserve, s);
                 IUniswapPair(pairs[i]).swap(n, 0, msg.sender, new bytes(0));
+                //IERC20(IUniswapPair(pairs[i]).token0()).approve(pairs[i], type(uint256).max);
+                tokenAddress = IUniswapPair(pairs[i]).token0();
+                TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
             }
+
+            // add liquidity
+            TransferHelper.safeTransferFrom(_WETH, address(this), pairs[i], s-n);
+            TransferHelper.safeTransferFrom(tokenAddress, address(this), pairs[i], n);
+            IUniswapPair(pairs[i]).mint(msg.sender);
         }
 
+    }
+
+    // safety check to prevent sandwitch attack
+    function _safetyCheckForPoolRatio(uint safetyRatio, uint wethReserve, uint tokenReserve) private view {
+        uint minRatio = safetyRatio.mul(99).div(100);
+        uint maxRatio = safetyRatio.mul(101).div(100);
+        uint currentRatio = wethReserve.mul(ratioConstant).div(tokenReserve);
+        require(currentRatio >= minRatio);
+        require(currentRatio <= maxRatio);
+    }
+
+    // calculate amount of WETH to swap for token to add to pool
+    function _exactSwapAmount(uint wethReserve, uint s) private pure returns (uint amt) {
+        uint b = wethReserve.mul(1997);
+        uint c = wethReserve.mul(3988000).mul(s);
+        uint a = wethReserve.mul(wethReserve).mul(3988009);
+
+        amt = ((Math.sqrt(a.add(c))).sub(b)).div(1994);
     }
 }
