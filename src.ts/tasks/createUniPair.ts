@@ -23,7 +23,7 @@ export default task("create-uni-pair", "Create a new UNI pair")
     const pairAddress = await factory.getPair(tokenA, tokenB);
     log.info(`Successfully created pair at ${pairAddress} via tx ${tx.hash}`);
 
-    // log.info(`Pair init code hash: ${utils.keccak256(await factory.pairCreationCode())}`);
+    log.info(`Pair init code hash: ${utils.keccak256(await factory.pairCreationCode())}`);
 
     const TokenA = await (hre.ethers as any).getContractAt("FakeToken", tokenA, signerAddress);
     await (await TokenA.approve(router.address, parseEther(amountA))).wait();
