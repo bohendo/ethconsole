@@ -46,7 +46,7 @@ contract LiquidityManager {
             TransferHelper.safeApprove(_WETH, pairs[i], type(uint256).max);
 
             // Total value to be invested in pair i
-            uint s = investRatios[i].mul(msg.value);
+            uint s = investRatios[i].mul(msg.value).div(100);
             uint n;
 
             // swap weth for token
@@ -73,6 +73,10 @@ contract LiquidityManager {
             TransferHelper.safeTransferFrom(tokenAddress, address(this), pairs[i], n);
             IUniswapPair(pairs[i]).mint(msg.sender);
         }
+
+        uint balance = IERC20(_WETH).balanceOf(address(this));
+        if (balance > 0) TransferHelper.safeTransfer(_WETH, msg.sender, balance);
+
 
     }
 
