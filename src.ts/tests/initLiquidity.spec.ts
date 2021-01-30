@@ -1,4 +1,4 @@
-import { Zero } from "@ethersproject/constants";
+import { Zero, AddressZero } from "@ethersproject/constants";
 import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
@@ -54,10 +54,29 @@ describe("Initialize Liquidity", function() {
     const liqManagerAddress = await initLiquidity();
     console.log(`Got liqManagerAddress = ${liqManagerAddress}`);
     
-    // expect(liqManager.address).to.be.a("string");
+    expect(liqManagerAddress).not.equals(AddressZero);
   });
 
-  it("should have zero balance leftover for all tokens", () => {});
+  it("should have zero balance leftover for all tokens", async () => {
+    const liqManagerAddress = await initLiquidity();
+
+    for (const name of [
+    "FakeAAVE",
+    "FakeCOMP",
+    "FakeMKR",
+    "FakeUNI",
+    "FakeWBTC",
+    "FakeYFI",
+    "WETH",
+    ]) {
+      
+      const token = await (ethers as any).getContract(name, signerAddress);
+      let tokenBalance = await token.balanceOf(liqManagerAddress);
+      console.log(`Balance ${name}: ${tokenBalance.toString()}`);
+      expect(tokenBalance.eq(Zero)).to.be.true;
+    };
+
+  });
 
   it("should give liquidity tokens to msg.sender", () => {});
 
