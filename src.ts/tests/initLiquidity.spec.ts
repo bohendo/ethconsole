@@ -9,7 +9,7 @@ import { expect } from "./utils";
 
 describe("Initialize Liquidity", function() {
   const signerAddress = bob.address;
-  const investTokens = [ "FakeAAVE", "FakeCOMP", "FakeMKR", "FakeUNI", "FakeWBTC", "FakeYFI" ];
+  const investTokens = [ "FakeAAVE", "FakeCOMP", "FakeWBTC", "FakeYFI" ];
   let factory: Contract;
   let weth: Contract;
 
