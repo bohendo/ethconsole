@@ -3,12 +3,12 @@ import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
-import { alice, defaultLogLevel } from "../constants";
+import { bob, defaultLogLevel } from "../constants";
 
 import { expect } from "./utils";
 
 describe("Initialize Liquidity", function() {
-  const signerAddress = alice.address;
+  const signerAddress = bob.address;
   const investTokens = [ "FakeAAVE", "FakeCOMP", "FakeMKR", "FakeUNI", "FakeWBTC", "FakeYFI" ];
   let factory: Contract;
   let weth: Contract;
@@ -41,7 +41,7 @@ describe("Initialize Liquidity", function() {
     }
 
     return await run("init-liquidity", {
-      signerAddress: alice.address,
+      signerAddress: bob.address,
       amount: "1.5",
       pairs,
       allocations,
@@ -71,6 +71,8 @@ describe("Initialize Liquidity", function() {
   });
 
   it("should give liquidity tokens to msg.sender", async () => {
+    const liqManagerAddress = await initLiquidity();
+
     for (const name of investTokens) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -80,14 +82,15 @@ describe("Initialize Liquidity", function() {
 
       console.log(`Balance ${name}-WETH Uniswap Pair: ${liquidityTokenBalance.toString()}`);
       expect(liquidityTokenBalance.gt(Zero)).to.be.true;
-
     }
 
   });
 
   it("should revert if swap returns too few tokens", () => {});
 
-  it("should have same token reserve before and after", () => {});
+  it("should have same token reserve before and after", () => {
+
+  });
 
   it("should have WETH reserves increase proportional to allocation ratio", () => {});
 
