@@ -7,7 +7,7 @@ import { ethers, deployments, run } from "hardhat";
 import { alice, bob, defaultLogLevel, logger } from "../constants";
 
 import { expect } from "./utils";
-import { sqrt } from "../utils";
+import { getTokenSafeMinimums } from "../utils";
 
 describe("Initialize Liquidity", function() {
   const log = logger.child({ module: "TestInitLiq" });
@@ -17,7 +17,7 @@ describe("Initialize Liquidity", function() {
     "FakeAAVE": "30",
     "FakeCOMP": "30",
     "FakeWBTC": "10",
-    "FakeYFI": "30"
+    "FakeYFI": "30",
   };
   let factory: Contract;
   let weth: Contract;
@@ -39,7 +39,7 @@ describe("Initialize Liquidity", function() {
       ["FakeYFI",  "30"],
     ]) {
       if (parseEther(allocation).lte(Zero)) {
-        continue
+        continue;
       }
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -92,69 +92,43 @@ describe("Initialize Liquidity", function() {
 
   });
 
-  it.only("should revert if swap returns too few tokens", async () => {
+  it("should revert if swap returns too few tokens", async () => {
     const router = await (ethers as any).getContract("UniswapRouter", alice.address);
 
-    const intermediateSwapAmount = (
-      wethInvestment: BigNumber,
-      wethReserve: BigNumber,
-    ): BigNumber => {
-        const b = wethReserve.mul(1997);
-        const c = wethReserve.mul(3988000).mul(wethInvestment);
-        const a = wethReserve.mul(wethReserve).mul(3988009);
-        return ((sqrt(a.add(c))).sub(b)).div(1994);
-    };
-
     // First, determine the safe token minimums given the current chain state
-    const tokenMinimums = [] as string[];
-    for (let i = 0; i < pairs.length; i++) {
-      const pairAddress = pairs[i]
-      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
-      const token0 = await pair.token0();
-      let wethReserves;
-      let tokenReserves;
-      let token;
-      if (token0 === weth.address) {
-        [wethReserves, tokenReserves,] = await pair.getReserves();
-        token = await (ethers as any).getContractAt(
-          "FakeToken",
-          await pair.token1(),
-          signerAddress,
-        );
-      } else {
-        [tokenReserves, wethReserves,] = await pair.getReserves();
-        token = await (ethers as any).getContractAt(
-          "FakeToken",
-          token0,
-          signerAddress,
-        );
-      }
-      const amountOut = await router.getAmountOut(
-        intermediateSwapAmount(parseEther(allocations[i]), wethReserves),
-        wethReserves,
-        tokenReserves,
-      );
-      tokenMinimums.push(amountOut.mul(995).div(1000).toString());
-    }
+    const tokenMinimums = await getTokenSafeMinimums(
+      weth.address,
+      pairs,
+      allocations,
+      ethers,
+    );
 
     // Second, change the chain state to make swaps unsafe
+    const pair0 = await (ethers as any).getContractAt("UniswapPair", pairs[0]);
+    const token0 = await pair0.token0();
+    let tokenAddress: string;
+    if (token0 === weth.address) {
+      tokenAddress = await pair0.token1();
+    } else {
+      tokenAddress = token0;
+    }
     router.swapExactETHForTokens(
       Zero,
-      [pairs[0]],
+      [weth.address, tokenAddress],
       alice.address,
       Date.now() + 60000,
-      { value: parseEther("10") }
-    )
+      { value: parseEther("10") },
+    );
 
     // Third, execute liquidity initialization
-    const liqManagerAddress = await run("init-liquidity", {
+    await expect(run("init-liquidity", {
       signerAddress: bob.address,
       amount: "1.5",
       pairs,
       allocations,
       minTokens: tokenMinimums,
       logLevel: defaultLogLevel,
-    });
+    })).to.be.revertedWith("Liquidity Manager: TOO_FEW_TOKENS");
   });
 
   it("should have same token reserve before and after", async () => {
