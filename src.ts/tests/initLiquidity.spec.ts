@@ -62,12 +62,8 @@ describe("Initialize Liquidity", function() {
 
   it("should have zero balance leftover for all tokens", async () => {
     const liqManagerAddress = await initLiquidity();
-<<<<<<< HEAD
-    for (const name of [ ...investTokens, "WETH"]) {
-=======
 
     for (const name of [ ...Object.keys(investPortfolio), "WETH"]) {
->>>>>>> ✨ add weth reserve test
       const token = await (ethers as any).getContract(name, signerAddress);
       let tokenBalance = await token.balanceOf(liqManagerAddress);
       log.info(`Balance ${name}: ${tokenBalance.toString()}`);
