@@ -18,8 +18,7 @@ describe("Initialize Liquidity", function() {
     weth = await (ethers as any).getContract("WETH", signerAddress);
   });
 
-  it("should deploy without error", async () => {
-
+  const initLiquidity = async () => {
     const pairs = [] as string[];
     const allocations = [] as string[];
 
@@ -47,7 +46,24 @@ describe("Initialize Liquidity", function() {
       allocations,
       logLevel: defaultLogLevel,
     });
+  };
+
+  it("should deploy without error", async function () {
+
+    this.timeout(60000);
+    await initLiquidity();
+    
     // expect(liqManager.address).to.be.a("string");
   });
+
+  it("should have zero balance leftover for all tokens", () => {});
+
+  it("should give liquidity tokens to msg.sender", () => {});
+
+  it("should revert if swap returns too few tokens", () => {});
+
+  it("should have same token reserve before and after", () => {});
+
+  it("should have WETH reserves increase proportional to allocation ratio", () => {});
 
 });
