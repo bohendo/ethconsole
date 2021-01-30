@@ -8,9 +8,15 @@ import { bob, defaultLogLevel, logger } from "../constants";
 import { expect } from "./utils";
 
 describe("Initialize Liquidity", function() {
-  const investTokens = [ "FakeAAVE", "FakeCOMP", "FakeWBTC", "FakeYFI" ];
   const log = logger.child({ module: "TestInitLiq" });
   const signerAddress = bob.address;
+  const investAmount = "1.5";
+  const investPortfolio = {
+    "FakeAAVE": "30",
+    "FakeCOMP": "30",
+    "FakeWBTC": "10",
+    "FakeYFI": "30"
+  };
   let factory: Contract;
   let weth: Contract;
 
@@ -41,7 +47,7 @@ describe("Initialize Liquidity", function() {
     }
     return await run("init-liquidity", {
       signerAddress: bob.address,
-      amount: "1.5",
+      amount: investAmount,
       pairs,
       allocations,
       logLevel: defaultLogLevel,
@@ -56,7 +62,12 @@ describe("Initialize Liquidity", function() {
 
   it("should have zero balance leftover for all tokens", async () => {
     const liqManagerAddress = await initLiquidity();
+<<<<<<< HEAD
     for (const name of [ ...investTokens, "WETH"]) {
+=======
+
+    for (const name of [ ...Object.keys(investPortfolio), "WETH"]) {
+>>>>>>> ✨ add weth reserve test
       const token = await (ethers as any).getContract(name, signerAddress);
       let tokenBalance = await token.balanceOf(liqManagerAddress);
       log.info(`Balance ${name}: ${tokenBalance.toString()}`);
@@ -67,7 +78,7 @@ describe("Initialize Liquidity", function() {
   it("should give liquidity tokens to msg.sender", async () => {
     const liqManagerAddress = await initLiquidity();
 
-    for (const name of investTokens) {
+    for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
 
@@ -86,7 +97,7 @@ describe("Initialize Liquidity", function() {
 
     const initialReserves = {};
 
-    for (const name of investTokens) {
+    for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
 
@@ -103,7 +114,7 @@ describe("Initialize Liquidity", function() {
 
     const liqManagerAddress = await initLiquidity();
 
-    for (const name of investTokens) {
+    for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
       let finalReserve;
@@ -124,7 +135,50 @@ describe("Initialize Liquidity", function() {
 
   });
 
-  it("should have WETH reserves increase proportional to allocation ratio", () => {
+  it("should have WETH reserves increase proportional to allocation ratio", async () => {
+    const initialReserves = {};
+
+    for (const name of Object.keys(investPortfolio)) {
+      const token = await (ethers as any).getContract(name, signerAddress);
+      const pairAddress = await factory.getPair(weth.address, token.address);
+
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
+
+      let token0 = await pair.token0();
+
+      if (token0 === weth.address){
+        initialReserves[name] = (await pair.getReserves())[0];
+      } else {
+        initialReserves[name] = (await pair.getReserves())[1];
+      }
+    }
+
+    const liqManagerAddress = await initLiquidity();
+
+    for (const name of Object.keys(investPortfolio)) {
+      const token = await (ethers as any).getContract(name, signerAddress);
+      const pairAddress = await factory.getPair(weth.address, token.address);
+      let finalReserve;
+
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
+
+      let token0 = await pair.token0();
+
+      if (token0 === weth.address){
+        finalReserve = (await pair.getReserves())[0];
+      } else {
+        finalReserve = (await pair.getReserves())[1];
+      }
+
+      let expectedReserve = initialReserves[name].add(parseEther(investAmount).mul(investPortfolio[name]).div("100"));
+
+      console.log(`${name}-WETH pool
+       Initial WETH Reserve: ${initialReserves[name].toString()},
+       Final WETH Reserve: ${finalReserve}
+       Expected WETH Reserve: ${expectedReserve}`);
+
+      expect(finalReserve.eq(expectedReserve)).to.be.true;
+    }
 
   });
 
