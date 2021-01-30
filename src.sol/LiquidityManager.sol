@@ -14,7 +14,6 @@ import "./uniswap/library.sol";
 
 contract LiquidityManager {
     using SafeMath for uint;
-    uint ratioConstant = 100000;
 
     constructor(
         address _WETH,
@@ -27,48 +26,44 @@ contract LiquidityManager {
         IWETH(_WETH).deposit{value: msg.value}();
 
         for (uint i; i < pairs.length; i++) {
-            uint wethReserve;
-            uint tokenReserve;
-            uint lastTimeStamp;
+            address pair = pairs[i];
+            address token0 = IUniswapPair(pair).token0(); // store locally to save gas
             address tokenAddress;
+            uint n; // ETH value to be swapped for tokens
+            uint s = allocationRatios[i].mul(msg.value).div(100); // ETH value to be invested
             uint tokenAmountOut;
-
-            TransferHelper.safeApprove(_WETH, pairs[i], type(uint256).max);
-
-            // Total value to be invested in pair i
-            uint s = allocationRatios[i].mul(msg.value).div(100);
-            uint n;
+            uint tokenReserve;
+            uint wethReserve;
 
             // swap weth for token
-            if ( IUniswapPair(pairs[i]).token0() == _WETH) {
-                (wethReserve, tokenReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
+            if (token0  == _WETH) {
+                (wethReserve, tokenReserve,) = IUniswapPair(pair).getReserves();
                 n = _exactSwapAmount(wethReserve, s);
-                // Transfer weth for swap
-                TransferHelper.safeTransfer(_WETH, pairs[i], n);
+                tokenAddress = IUniswapPair(pair).token1();
+                // swap weth for tokens
+                TransferHelper.safeTransfer(_WETH, pair, n);
                 tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
                 require(tokenAmountOut >= minTokensReceived[i], "Liquidity Manager: TOO_FEW_TOKENS");
-                IUniswapPair(pairs[i]).swap(0, tokenAmountOut, address(this), new bytes(0));
-                tokenAddress = IUniswapPair(pairs[i]).token1();
-                TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
+                IUniswapPair(pair).swap(0, tokenAmountOut, address(this), new bytes(0));
 
             } else {
-                (tokenReserve, wethReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
+                (tokenReserve, wethReserve,) = IUniswapPair(pair).getReserves();
                 n = _exactSwapAmount(wethReserve, s);
-                // Transfer weth for swap
-                TransferHelper.safeTransfer(_WETH, pairs[i], n);
+                tokenAddress = token0;
+                // swap weth for tokens
+                TransferHelper.safeTransfer(_WETH, pair, n);
                 tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
                 require(tokenAmountOut >= minTokensReceived[i], "Liquidity Manager: TOO_FEW_TOKENS");
-                IUniswapPair(pairs[i]).swap(tokenAmountOut, 0, address(this), new bytes(0));
-                tokenAddress = IUniswapPair(pairs[i]).token0();
-                TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
+                IUniswapPair(pair).swap(tokenAmountOut, 0, address(this), new bytes(0));
             }
 
             // add liquidity
-            TransferHelper.safeTransfer(_WETH, pairs[i], s-n);
-            TransferHelper.safeTransfer(tokenAddress, pairs[i], tokenAmountOut);
-            IUniswapPair(pairs[i]).mint(msg.sender);
+            TransferHelper.safeTransfer(_WETH, pair, s-n);
+            TransferHelper.safeTransfer(tokenAddress, pair, tokenAmountOut);
+            IUniswapPair(pair).mint(msg.sender);
         }
 
+        // Return any WETH dust that's leftover
         uint balance = IERC20(_WETH).balanceOf(address(this));
         if (balance > 0) TransferHelper.safeTransfer(_WETH, msg.sender, balance);
     }

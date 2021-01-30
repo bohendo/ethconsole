@@ -3,13 +3,14 @@ import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
-import { bob, defaultLogLevel } from "../constants";
+import { bob, defaultLogLevel, logger } from "../constants";
 
 import { expect } from "./utils";
 
 describe("Initialize Liquidity", function() {
-  const signerAddress = bob.address;
   const investTokens = [ "FakeAAVE", "FakeCOMP", "FakeWBTC", "FakeYFI" ];
+  const log = logger.child({ module: "TestInitLiq" });
+  const signerAddress = bob.address;
   let factory: Contract;
   let weth: Contract;
 
@@ -22,7 +23,6 @@ describe("Initialize Liquidity", function() {
   const initLiquidity = async (): Promise<string> => {
     const pairs = [] as string[];
     const allocations = [] as string[];
-
     for (const [name, allocation] of [
       ["FakeAAVE", "30"],
       ["FakeCOMP", "30"],
@@ -39,7 +39,6 @@ describe("Initialize Liquidity", function() {
       pairs.push(pairAddress);
       allocations.push(allocation);
     }
-
     return await run("init-liquidity", {
       signerAddress: bob.address,
       amount: "1.5",
@@ -49,25 +48,20 @@ describe("Initialize Liquidity", function() {
     });
   };
 
-  it("should deploy without error", async function () {
-
-    this.timeout(60000);
+  it("should run without error", async () => {
     const liqManagerAddress = await initLiquidity();
-    console.log(`Got liqManagerAddress = ${liqManagerAddress}`);
-    
+    log.info(`Got liqManagerAddress = ${liqManagerAddress}`);
     expect(liqManagerAddress).not.equals(AddressZero);
   });
 
   it("should have zero balance leftover for all tokens", async () => {
     const liqManagerAddress = await initLiquidity();
-
     for (const name of [ ...investTokens, "WETH"]) {
       const token = await (ethers as any).getContract(name, signerAddress);
       let tokenBalance = await token.balanceOf(liqManagerAddress);
-      console.log(`Balance ${name}: ${tokenBalance.toString()}`);
+      log.info(`Balance ${name}: ${tokenBalance.toString()}`);
       expect(tokenBalance.eq(Zero)).to.be.true;
     };
-
   });
 
   it("should give liquidity tokens to msg.sender", async () => {

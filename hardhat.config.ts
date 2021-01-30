@@ -1,3 +1,4 @@
+import { parseUnits } from "@ethersproject/units";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
@@ -44,6 +45,7 @@ const config: HardhatUserConfig = {
         mnemonic,
       },
       chainId,
+      gasPrice: parseUnits("100", "gwei").toNumber(),
       loggingEnabled: false,
       saveDeployments: false,
     },
