@@ -30,7 +30,7 @@ contract LiquidityManager {
         address _WETH,
         address[4] memory pairs,
         uint[4] memory investRatios,
-        uint[4] memory safetyRatios
+        uint[4] memory minTokenReceived
     )
       payable
     {
@@ -54,26 +54,26 @@ contract LiquidityManager {
             // swap weth for token
             if ( IUniswapPair(pairs[i]).token0() == _WETH) {
                 (wethReserve, tokenReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
-                _safetyCheckForPoolRatio(safetyRatios[i], wethReserve, tokenReserve);
                 n = _exactSwapAmount(wethReserve, s);
 
                 // Transfer weth for swap
                 TransferHelper.safeTransfer(_WETH, pairs[i], n);
 
                 tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
+                require(tokenAmountOut >= minTokenReceived[i], "Liquidity Manager: Token amount too low");
 
                 IUniswapPair(pairs[i]).swap(0, tokenAmountOut, address(this), new bytes(0));
                 tokenAddress = IUniswapPair(pairs[i]).token1();
                 TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
             } else {
                 (tokenReserve, wethReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
-                _safetyCheckForPoolRatio(safetyRatios[i], wethReserve, tokenReserve);
                 n = _exactSwapAmount(wethReserve, s);
 
                 // Transfer weth for swap
                 TransferHelper.safeTransfer(_WETH, pairs[i], n);
 
                 tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
+                require(tokenAmountOut >= minTokenReceived[i], "Liquidity Manager: Token amount too low");
 
                 IUniswapPair(pairs[i]).swap(tokenAmountOut, 0, address(this), new bytes(0));
                 tokenAddress = IUniswapPair(pairs[i]).token0();
@@ -90,15 +90,6 @@ contract LiquidityManager {
         if (balance > 0) TransferHelper.safeTransfer(_WETH, msg.sender, balance);
 
 
-    }
-
-    // safety check to prevent sandwitch attack
-    function _safetyCheckForPoolRatio(uint safetyRatio, uint wethReserve, uint tokenReserve) private view {
-        uint minRatio = safetyRatio.mul(99).div(100);
-        uint maxRatio = safetyRatio.mul(101).div(100);
-        uint currentRatio = wethReserve.mul(ratioConstant).div(tokenReserve);
-        require(currentRatio >= minRatio);
-        require(currentRatio <= maxRatio);
     }
 
     // calculate amount of WETH to swap for token to add to pool
