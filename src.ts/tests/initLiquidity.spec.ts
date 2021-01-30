@@ -18,7 +18,7 @@ describe("Initialize Liquidity", function() {
     weth = await (ethers as any).getContract("WETH", signerAddress);
   });
 
-  const initLiquidity = async () => {
+  const initLiquidity = async (): Promise<string> => {
     const pairs = [] as string[];
     const allocations = [] as string[];
 
@@ -39,7 +39,7 @@ describe("Initialize Liquidity", function() {
       allocations.push(allocation);
     }
 
-    await run("init-liquidity", {
+    return await run("init-liquidity", {
       signerAddress: alice.address,
       amount: "1.5",
       pairs,
@@ -51,7 +51,8 @@ describe("Initialize Liquidity", function() {
   it("should deploy without error", async function () {
 
     this.timeout(60000);
-    await initLiquidity();
+    const liqManagerAddress = await initLiquidity();
+    console.log(`Got liqManagerAddress = ${liqManagerAddress}`);
     
     // expect(liqManager.address).to.be.a("string");
   });

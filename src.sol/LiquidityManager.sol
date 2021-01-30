@@ -16,29 +16,17 @@ contract LiquidityManager {
     using SafeMath for uint;
     uint ratioConstant = 100000;
 
-
-    /*
-    address WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address uniV2Router = 0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D;
-    address WETH_UNI = 0xd3d2e2692501a5c9ca623199d38826e513033a17;
-    address WETH_AAVE = 0xdfc14d2af169b0d36c4eff567ada9b2e0cae044f;
-    address WETH_COMP = 0xcffdded873554f362ac02f8fb1f02e5ada10516f;
-    address WETH_YFI = 0x2fdbadf3c4d5a8666bc06645b8358ab803996e28;
-    */
-
     constructor(
         address _WETH,
         address[4] memory pairs,
-        uint[4] memory investRatios,
-        uint[4] memory minTokenReceived
+        uint[4] memory allocationRatios,
+        uint[4] memory minTokensReceived
     )
-      payable
+        payable
     {
-
         IWETH(_WETH).deposit{value: msg.value}();
 
         for (uint i; i < pairs.length; i++) {
-
             uint wethReserve;
             uint tokenReserve;
             uint lastTimeStamp;
@@ -48,33 +36,28 @@ contract LiquidityManager {
             TransferHelper.safeApprove(_WETH, pairs[i], type(uint256).max);
 
             // Total value to be invested in pair i
-            uint s = investRatios[i].mul(msg.value).div(100);
+            uint s = allocationRatios[i].mul(msg.value).div(100);
             uint n;
 
             // swap weth for token
             if ( IUniswapPair(pairs[i]).token0() == _WETH) {
                 (wethReserve, tokenReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
                 n = _exactSwapAmount(wethReserve, s);
-
                 // Transfer weth for swap
                 TransferHelper.safeTransfer(_WETH, pairs[i], n);
-
                 tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
-                require(tokenAmountOut >= minTokenReceived[i], "Liquidity Manager: Token amount too low");
-
+                require(tokenAmountOut >= minTokensReceived[i], "Liquidity Manager: TOO_FEW_TOKENS");
                 IUniswapPair(pairs[i]).swap(0, tokenAmountOut, address(this), new bytes(0));
                 tokenAddress = IUniswapPair(pairs[i]).token1();
                 TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
+
             } else {
                 (tokenReserve, wethReserve, lastTimeStamp) = IUniswapPair(pairs[i]).getReserves();
                 n = _exactSwapAmount(wethReserve, s);
-
                 // Transfer weth for swap
                 TransferHelper.safeTransfer(_WETH, pairs[i], n);
-
                 tokenAmountOut = UniswapLibrary.getAmountOut(n, wethReserve, tokenReserve);
-                require(tokenAmountOut >= minTokenReceived[i], "Liquidity Manager: Token amount too low");
-
+                require(tokenAmountOut >= minTokensReceived[i], "Liquidity Manager: TOO_FEW_TOKENS");
                 IUniswapPair(pairs[i]).swap(tokenAmountOut, 0, address(this), new bytes(0));
                 tokenAddress = IUniswapPair(pairs[i]).token0();
                 TransferHelper.safeApprove(tokenAddress, pairs[i], type(uint256).max);
@@ -88,8 +71,6 @@ contract LiquidityManager {
 
         uint balance = IERC20(_WETH).balanceOf(address(this));
         if (balance > 0) TransferHelper.safeTransfer(_WETH, msg.sender, balance);
-
-
     }
 
     // calculate amount of WETH to swap for token to add to pool
@@ -97,7 +78,7 @@ contract LiquidityManager {
         uint b = wethReserve.mul(1997);
         uint c = wethReserve.mul(3988000).mul(s);
         uint a = wethReserve.mul(wethReserve).mul(3988009);
-
         amt = ((Math.sqrt(a.add(c))).sub(b)).div(1994);
     }
+
 }

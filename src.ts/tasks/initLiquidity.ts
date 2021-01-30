@@ -10,7 +10,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
   .addParam("allocations", "A list of allocation percentages for each liquidity pair", [], types.json)
   .addParam("signerAddress", "The address that will make the investmetn & pay for gas", AddressZero, types.string)
   .addOptionalParam("logLevel", "'debug', 'info' (default), 'warn', 'error', 'silent'", "info", types.string)
-  .setAction(async (args, hre): Promise<void> => {
+  .setAction(async (args, hre): Promise<string> => {
     const { amount, pairs, allocations, logLevel, signerAddress } = args;
     const log = pino({ level: logLevel || "info" });
 
@@ -26,7 +26,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
       throw new Error(`You must supply exactly 4 allocations but you supplied ${allocations.length}`);
     }
 
-    const safetyRatios = [] as string[];
+    const tokenMinimums = [] as string[];
     for (const pairAddress of pairs) {
       const pair = await (hre.ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
       const token0 = await pair.token0();
@@ -37,7 +37,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
       } else {
         [tokenReserves, wethReserves,] = await pair.getReserves();
       }
-      safetyRatios.push(wethReserves.mul(100000).div(tokenReserves));
+      tokenMinimums.push(wethReserves.mul(100000).div(tokenReserves));
     }
 
     const deployment = await hre.deployments.deploy("LiquidityManager", {
@@ -46,7 +46,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
         weth.address,
         pairs,
         allocations,
-        safetyRatios,
+        tokenMinimums,
       ],
       value: parseEther(amount),
     });
@@ -55,6 +55,8 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     const receipt = await hre.ethers.provider.getTransactionReceipt(deployment.transactionHash!);
 
     log.info(`Spent ${receipt.gasUsed} worth ${formatEther(receipt.gasUsed.mul(tx.gasPrice))} ${EtherSymbol}`);
+
+    return deployment.address;
 
   });
 
