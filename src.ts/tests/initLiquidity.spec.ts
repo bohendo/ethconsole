@@ -82,10 +82,50 @@ describe("Initialize Liquidity", function() {
 
   it("should revert if swap returns too few tokens", () => {});
 
-  it("should have same token reserve before and after", () => {
+  it("should have same token reserve before and after", async () => {
+
+    const initialReserves = {};
+
+    for (const name of investTokens) {
+      const token = await (ethers as any).getContract(name, signerAddress);
+      const pairAddress = await factory.getPair(weth.address, token.address);
+
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
+
+      let token0 = await pair.token0();
+
+      if (token0 === weth.address){
+        initialReserves[name] = (await pair.getReserves())[1];
+      } else {
+        initialReserves[name] = (await pair.getReserves())[0];
+      }
+    }
+
+    const liqManagerAddress = await initLiquidity();
+
+    for (const name of investTokens) {
+      const token = await (ethers as any).getContract(name, signerAddress);
+      const pairAddress = await factory.getPair(weth.address, token.address);
+      let finalReserve;
+
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
+
+      let token0 = await pair.token0();
+
+      if (token0 === weth.address){
+        finalReserve = (await pair.getReserves())[1];
+      } else {
+        finalReserve = (await pair.getReserves())[0];
+      }
+
+      console.log(`${name} Initial Reserve: ${initialReserves[name].toString()}, Final Reserve: ${finalReserve}`);
+      expect(finalReserve.eq(initialReserves[name])).to.be.true;
+    }
 
   });
 
-  it("should have WETH reserves increase proportional to allocation ratio", () => {});
+  it("should have WETH reserves increase proportional to allocation ratio", () => {
+
+  });
 
 });
