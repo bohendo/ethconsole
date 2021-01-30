@@ -4,36 +4,31 @@ import { formatEther, parseEther } from "@ethersproject/units";
 import { task, types } from "hardhat/config";
 import pino from "pino";
 
-import { sqrt } from "../utils";
+import { getIntermediateSwapAmount, getTokenSafeMinimums, getTokenNames } from "../utils";
 
 export default task("init-liquidity", "Initialize an investment into liquidity for various Uniswap pairs")
   .addParam("amount", "The decimal amount of ETH to invest", "1", types.string)
   .addParam("pairs", "A list of liquidity pair addresss to invest into", [], types.json)
   .addParam("allocations", "A list of allocation percentages for each liquidity pair", [], types.json)
   .addParam("signerAddress", "The address that will make the investmetn & pay for gas", AddressZero, types.string)
+  .addOptionalParam("minTokens", "A list of minimal tokens to receive during intermediate swaps", [], types.json)
   .addOptionalParam("logLevel", "'debug', 'info' (default), 'warn', 'error', 'silent'", "info", types.string)
   .setAction(async (args, hre): Promise<string> => {
-    const { amount, pairs, allocations, logLevel, signerAddress } = args;
+    const { amount, pairs, allocations, logLevel, signerAddress, minTokens } = args;
     const log = pino({ level: logLevel || "info" });
 
     const factory = await (hre.ethers as any).getContract("UniswapFactory", signerAddress);
     const router = await (hre.ethers as any).getContract("UniswapRouter", signerAddress);
     const weth = await (hre.ethers as any).getContract("WETH", signerAddress);
 
-    const intermediateSwapAmount = (
-      wethInvestment: BigNumber,
-      wethReserve: BigNumber,
-    ): BigNumber => {
-        const b = wethReserve.mul(1997);
-        const c = wethReserve.mul(3988000).mul(wethInvestment);
-        const a = wethReserve.mul(wethReserve).mul(3988009);
-        return ((sqrt(a.add(c))).sub(b)).div(1994);
-    };
-
     ////////////////////////////////////////
     // Check to ensure valid input was provided
 
     log.info(`Verifying provided parameters..`);
+
+    if (!(minTokens.length === 0 || minTokens === 4)) {
+      throw new Error(`If you supply min tokens it must include 4 entries, not ${pairs.length}`);
+    }
 
     if (pairs.length !== 4) {
       throw new Error(`You must supply exactly 4 pairs but you supplied ${pairs.length}`);
@@ -83,12 +78,17 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
         );
       }
       tokenNames.push(await token.name());
-      const amountOut = await router.getAmountOut(
-        intermediateSwapAmount(ethAllocations[i], wethReserves),
-        wethReserves,
-        tokenReserves,
-      );
-      tokenMinimums.push(amountOut.mul(995).div(1000));
+      // Use provided safety limits if provided, else get current chain state & base mins off that
+      if (minTokens.lenth === 4) {
+        tokenMinimums.push(minTokens[i]);
+      } else {
+        const amountOut = await router.getAmountOut(
+          getIntermediateSwapAmount(ethAllocations[i], wethReserves),
+          wethReserves,
+          tokenReserves,
+        );
+        tokenMinimums.push(amountOut.mul(995).div(1000).toString());
+      }
     }
 
     ////////////////////////////////////////

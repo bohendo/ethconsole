@@ -1,4 +1,6 @@
-import { BigNumber, getDefaultProvider, providers, utils, Wallet } from "ethers";
+import { BigNumber } from "@ethersproject/bignumber";
+import { parseEther } from "@ethersproject/units";
+import { getDefaultProvider, providers, utils, Wallet } from "ethers";
 
 import { alice, bob, defaultLogLevel } from "./constants";
 
@@ -30,15 +32,15 @@ export const log = (msg: any) => {
     console.log(msg);
   } else if (typeof msg === "object") {
     if (msg._isBigNumber) {
-      console.log(prefix + utils.formatEther(msg))
+      console.log(prefix + utils.formatEther(msg));
     } else {
-      console.log(prefix + JSON.stringify(msg, undefined, 2))
+      console.log(prefix + JSON.stringify(msg, undefined, 2));
     }
   }
-}
+};
 
 export const sqrt = (n: BigNumber): BigNumber => {
-  let z
+  let z;
   if (n.gt(BigNumber.from(3))) {
     z = n;
     let x = n.div(2).add(1);
@@ -50,4 +52,80 @@ export const sqrt = (n: BigNumber): BigNumber => {
     z = BigNumber.from(1);
   }
   return z;
-}
+};
+
+export const getIntermediateSwapAmount = (
+  wethInvestment: BigNumber,
+  wethReserve: BigNumber,
+): BigNumber => {
+    const b = wethReserve.mul(1997);
+    const c = wethReserve.mul(3988000).mul(wethInvestment);
+    const a = wethReserve.mul(wethReserve).mul(3988009);
+    return ((sqrt(a.add(c))).sub(b)).div(1994);
+};
+
+export const getTokenNames = async (
+  wethAddress: string,
+  pairs: string[],
+  ethers: any,
+): Promise<string[]> => {
+  const tokenNames = [] as string[];
+  for (let i = 0; i < pairs.length; i++) {
+    const pairAddress = pairs[i];
+    const pair = await ethers.getContractAt("UniswapPair", pairAddress);
+    const token0 = await pair.token0();
+    let token;
+    if (token0 === wethAddress) {
+      token = await ethers.getContractAt(
+        "FakeToken",
+        await pair.token1(),
+      );
+    } else {
+      token = await ethers.getContractAt(
+        "FakeToken",
+        token0,
+      );
+    }
+    tokenNames.push(await token.name());
+  }
+  return tokenNames;
+};
+
+
+export const getTokenSafeMinimums = async (
+  wethAddress: string,
+  pairs: string[],
+  allocations: string[],
+  ethers: any,
+): Promise<string[]> => {
+  const tokenMinimums = [] as string[];
+  const router = await (ethers as any).getContract("UniswapRouter");
+  for (let i = 0; i < pairs.length; i++) {
+    const pairAddress = pairs[i];
+    const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress);
+    const token0 = await pair.token0();
+    let wethReserves;
+    let tokenReserves;
+    let token;
+    if (token0 === wethAddress) {
+      [wethReserves, tokenReserves] = await pair.getReserves();
+      token = await (ethers as any).getContractAt(
+        "FakeToken",
+        await pair.token1(),
+      );
+    } else {
+      [tokenReserves, wethReserves] = await pair.getReserves();
+      token = await (ethers as any).getContractAt(
+        "FakeToken",
+        token0,
+      );
+    }
+    const amountOut = await router.getAmountOut(
+      getIntermediateSwapAmount(parseEther(allocations[i]), wethReserves),
+      wethReserves,
+      tokenReserves,
+    );
+    tokenMinimums.push(amountOut.mul(995).div(1000).toString());
+  }
+  return tokenMinimums;
+};

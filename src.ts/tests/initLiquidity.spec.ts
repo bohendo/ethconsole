@@ -1,11 +1,13 @@
+import { BigNumber } from "@ethersproject/bignumber";
 import { Zero, AddressZero } from "@ethersproject/constants";
 import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
-import { bob, defaultLogLevel, logger } from "../constants";
+import { alice, bob, defaultLogLevel, logger } from "../constants";
 
 import { expect } from "./utils";
+import { sqrt } from "../utils";
 
 describe("Initialize Liquidity", function() {
   const log = logger.child({ module: "TestInitLiq" });
@@ -19,16 +21,15 @@ describe("Initialize Liquidity", function() {
   };
   let factory: Contract;
   let weth: Contract;
+  let pairs: string[];
+  let allocations: string[];
 
   beforeEach(async () => {
     await deployments.fixture();
     factory = await (ethers as any).getContract("UniswapFactory", signerAddress);
     weth = await (ethers as any).getContract("WETH", signerAddress);
-  });
-
-  const initLiquidity = async (): Promise<string> => {
-    const pairs = [] as string[];
-    const allocations = [] as string[];
+    pairs = [];
+    allocations = [];
     for (const [name, allocation] of [
       ["FakeAAVE", "30"],
       ["FakeCOMP", "30"],
@@ -45,11 +46,15 @@ describe("Initialize Liquidity", function() {
       pairs.push(pairAddress);
       allocations.push(allocation);
     }
+  });
+
+  const initLiquidity = async (minTokens?: string[]): Promise<string> => {
     return await run("init-liquidity", {
       signerAddress: bob.address,
       amount: investAmount,
       pairs,
       allocations,
+      minTokens: minTokens || [],
       logLevel: defaultLogLevel,
     });
   };
@@ -87,7 +92,70 @@ describe("Initialize Liquidity", function() {
 
   });
 
-  it("should revert if swap returns too few tokens", () => {});
+  it.only("should revert if swap returns too few tokens", async () => {
+    const router = await (ethers as any).getContract("UniswapRouter", alice.address);
+
+    const intermediateSwapAmount = (
+      wethInvestment: BigNumber,
+      wethReserve: BigNumber,
+    ): BigNumber => {
+        const b = wethReserve.mul(1997);
+        const c = wethReserve.mul(3988000).mul(wethInvestment);
+        const a = wethReserve.mul(wethReserve).mul(3988009);
+        return ((sqrt(a.add(c))).sub(b)).div(1994);
+    };
+
+    // First, determine the safe token minimums given the current chain state
+    const tokenMinimums = [] as string[];
+    for (let i = 0; i < pairs.length; i++) {
+      const pairAddress = pairs[i]
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
+      const token0 = await pair.token0();
+      let wethReserves;
+      let tokenReserves;
+      let token;
+      if (token0 === weth.address) {
+        [wethReserves, tokenReserves,] = await pair.getReserves();
+        token = await (ethers as any).getContractAt(
+          "FakeToken",
+          await pair.token1(),
+          signerAddress,
+        );
+      } else {
+        [tokenReserves, wethReserves,] = await pair.getReserves();
+        token = await (ethers as any).getContractAt(
+          "FakeToken",
+          token0,
+          signerAddress,
+        );
+      }
+      const amountOut = await router.getAmountOut(
+        intermediateSwapAmount(parseEther(allocations[i]), wethReserves),
+        wethReserves,
+        tokenReserves,
+      );
+      tokenMinimums.push(amountOut.mul(995).div(1000).toString());
+    }
+
+    // Second, change the chain state to make swaps unsafe
+    router.swapExactETHForTokens(
+      Zero,
+      [pairs[0]],
+      alice.address,
+      Date.now() + 60000,
+      { value: parseEther("10") }
+    )
+
+    // Third, execute liquidity initialization
+    const liqManagerAddress = await run("init-liquidity", {
+      signerAddress: bob.address,
+      amount: "1.5",
+      pairs,
+      allocations,
+      minTokens: tokenMinimums,
+      logLevel: defaultLogLevel,
+    });
+  });
 
   it("should have same token reserve before and after", async () => {
 
