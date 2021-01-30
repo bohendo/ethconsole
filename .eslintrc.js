@@ -10,27 +10,16 @@ module.exports = {
     "no-var": ["error"],
     "object-curly-spacing": ["error", "always"],
     "quotes": ["error", "double", { allowTemplateLiterals: true, avoidEscape: true }],
-    "react-hooks/rules-of-hooks": ["off"],
-    "react/display-name": ["off"],
-    "react/no-unescaped-entities": ["off"],
-    "react/prop-types": ["off"],
     "semi": ["error", "always"],
     "sort-keys": ["off"],
     "spaced-comment": ["off"],
   },
-  settings: {
-    react: {
-      version: "detect",
-    },
-  },
   env: {
-    browser: true,
+    node: true,
     es6: true,
     mocha: true,
   },
   extends: [
-    "react-app",
-    "plugin:react/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
   ],
   parser: "@typescript-eslint/parser",
@@ -41,5 +30,5 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint", "prettier"],
+  plugins: ["@typescript-eslint"],
 };
