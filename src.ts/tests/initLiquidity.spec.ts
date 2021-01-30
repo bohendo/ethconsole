@@ -9,6 +9,7 @@ import { expect } from "./utils";
 
 describe("Initialize Liquidity", function() {
   const signerAddress = alice.address;
+  const investTokens = [ "FakeAAVE", "FakeCOMP", "FakeMKR", "FakeUNI", "FakeWBTC", "FakeYFI" ];
   let factory: Contract;
   let weth: Contract;
 
@@ -60,16 +61,7 @@ describe("Initialize Liquidity", function() {
   it("should have zero balance leftover for all tokens", async () => {
     const liqManagerAddress = await initLiquidity();
 
-    for (const name of [
-    "FakeAAVE",
-    "FakeCOMP",
-    "FakeMKR",
-    "FakeUNI",
-    "FakeWBTC",
-    "FakeYFI",
-    "WETH",
-    ]) {
-      
+    for (const name of [ ...investTokens, "WETH"]) {
       const token = await (ethers as any).getContract(name, signerAddress);
       let tokenBalance = await token.balanceOf(liqManagerAddress);
       console.log(`Balance ${name}: ${tokenBalance.toString()}`);
@@ -78,7 +70,20 @@ describe("Initialize Liquidity", function() {
 
   });
 
-  it("should give liquidity tokens to msg.sender", () => {});
+  it("should give liquidity tokens to msg.sender", async () => {
+    for (const name of investTokens) {
+      const token = await (ethers as any).getContract(name, signerAddress);
+      const pairAddress = await factory.getPair(weth.address, token.address);
+
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
+      let liquidityTokenBalance = await pair.balanceOf(signerAddress);
+
+      console.log(`Balance ${name}-WETH Uniswap Pair: ${liquidityTokenBalance.toString()}`);
+      expect(liquidityTokenBalance.gt(Zero)).to.be.true;
+
+    }
+
+  });
 
   it("should revert if swap returns too few tokens", () => {});
 
