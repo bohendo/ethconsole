@@ -91,9 +91,9 @@ export const getTokenNames = async (
   return tokenNames;
 };
 
-
 export const getTokenSafeMinimums = async (
   wethAddress: string,
+  ethInvestment: string,
   pairs: string[],
   allocations: string[],
   ethers: any,
@@ -121,7 +121,10 @@ export const getTokenSafeMinimums = async (
       );
     }
     const amountOut = await router.getAmountOut(
-      getIntermediateSwapAmount(parseEther(allocations[i]), wethReserves),
+      getIntermediateSwapAmount(
+        parseEther(ethInvestment).mul(allocations[i]).div(100),
+        wethReserves,
+      ),
       wethReserves,
       tokenReserves,
     );

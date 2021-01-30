@@ -51,7 +51,6 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     ////////////////////////////////////////
     // Determine the minimum tokens to receive from intermediate swaps
 
-    log.info(`Determining the minimum amount of tokens we should receive..`);
 
     const tokenNames = await getTokenNames(
       weth.address,
@@ -59,11 +58,15 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
       hre.ethers,
     );
     let tokenMinimums: string[];
-    if (minTokens.lenth === 4) {
+    log.info(`Provided min tokens: ${minTokens}`);
+    if (minTokens.length === 4) {
+      log.warn(`Using provided token minimums instead of determining them from chain state`);
       tokenMinimums = minTokens;
     } else {
+      log.info(`Determining the minimum amount of tokens we should receive form chain state..`);
       tokenMinimums = await getTokenSafeMinimums(
         weth.address,
+        amount,
         pairs,
         allocations,
         hre.ethers,
