@@ -2,7 +2,7 @@ import * as eth from "ethers";
 
 import { ledger, getLedgerSigner } from "./ledger";
 import { provider, wallets } from "./constants";
-import { eth2, liqManager, maker, tokens, uniswap, yearn } from "./lib";
+import { eth2, liqManager, maker, tokens, uniswap } from "./lib";
 import { log, sqrt, toHumanReadable } from "./utils";
 
 // Attach exported utils to global for easy access in the console
@@ -15,7 +15,6 @@ setGlobal("liqManager", liqManager);
 setGlobal("maker", maker);
 setGlobal("uniswap", uniswap);
 setGlobal("usdc", tokens.usdc);
-setGlobal("yearn", yearn);
 
 setGlobal("BN", eth.BigNumber.from);
 setGlobal("eth", eth);

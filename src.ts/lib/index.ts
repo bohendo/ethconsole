@@ -3,7 +3,6 @@ import * as liqManager from "./liqManager";
 import * as maker from "./maker";
 import * as tokens from "./tokens";
 import * as uniswap from "./uniswap";
-import * as yearn from "./yearn";
 
 export {
   eth2,
@@ -11,5 +10,4 @@ export {
   maker,
   tokens,
   uniswap,
-  yearn,
 };
