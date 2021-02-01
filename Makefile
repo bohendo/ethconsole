@@ -76,7 +76,7 @@ compiled-sol: builder node-modules hardhat.config.ts $(shell find src.sol $(find
 	$(docker_run) "npm run compile"
 	$(log_finish) && mv -f $(totalTime) .flags/$@
 
-transpiled-ts: builder node-modules compiled-sol $(shell find src.ts $(find_options))
+transpiled-ts: builder node-modules compiled-sol $(shell find src.ts deployments $(find_options))
 	$(log_start)
 	$(docker_run) "npm run transpile"
 	$(log_finish) && mv -f $(totalTime) .flags/$@
