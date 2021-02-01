@@ -1,7 +1,6 @@
 import { HDNode } from "@ethersproject/hdnode";
 import { Wallet } from "@ethersproject/wallet";
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { Contract, getDefaultProvider, providers, utils } from "ethers";
 import pino from "pino";
 
 export const env = {
@@ -14,7 +13,7 @@ export const env = {
 };
 
 // This provider should only be used from the console, in tests use hre.ethers.provider
-export const provider = new providers.JsonRpcProvider(env.ethProviderUrl);
+export const provider = new JsonRpcProvider(env.ethProviderUrl);
 
 export const logger = pino({ level: env.logLevel });
 

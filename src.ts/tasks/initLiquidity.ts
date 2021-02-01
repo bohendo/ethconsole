@@ -17,8 +17,6 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     const { amount, pairs, allocations, logLevel, signerAddress, minTokens } = args;
     const log = pino({ level: logLevel || "info" });
 
-    const factory = await (hre.ethers as any).getContract("UniswapFactory", signerAddress);
-    const router = await (hre.ethers as any).getContract("UniswapRouter", signerAddress);
     const weth = await (hre.ethers as any).getContract("WETH", signerAddress);
 
     ////////////////////////////////////////

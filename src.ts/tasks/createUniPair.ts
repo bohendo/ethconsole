@@ -1,6 +1,6 @@
 import { Zero } from "@ethersproject/constants";
 import { formatEther, parseEther } from "@ethersproject/units";
-import { utils } from "ethers";
+import { keccak256 } from "@ethersproject/keccak256";
 import { task } from "hardhat/config";
 import pino from "pino";
 
@@ -30,7 +30,7 @@ export default task("create-uni-pair", "Create a new UNI pair")
       log.info(`A pair has already been created at ${pairAddress} for ${tokenA} & ${tokenB}`);
     }
 
-    log.info(`Pair init code hash: ${utils.keccak256(await factory.pairCreationCode())}`);
+    log.info(`Pair init code hash: ${keccak256(await factory.pairCreationCode())}`);
 
     const pair = await (hre.ethers as any).getContractAt("UniswapPair", pairAddress);
     const reserves = await pair.getReserves();

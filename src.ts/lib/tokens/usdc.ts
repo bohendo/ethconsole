@@ -1,4 +1,4 @@
-import { Contract, utils } from "ethers";
+import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
 

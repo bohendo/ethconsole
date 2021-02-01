@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   env: {
     node: true,
     es6: true,
@@ -18,15 +19,20 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  plugins: ["import", "@typescript-eslint"],
+  plugins: ["import", "unused-imports", "@typescript-eslint"],
   rules: {
+    "@typescript-eslint/no-unused-vars": "off",
     "comma-dangle": ["error", "always-multiline"],
-    "max-len": ["warn", {
-      code: 100,
-      ignoreStrings: true,
-      ignoreTemplateLiterals: true,
-      ignoreComments: true,
-    }],
+    "import/order": [1,
+      {
+        groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
+        "newlines-between": "always",
+      },
+    ],
+    "max-len": [
+      "warn",
+      { code: 100, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true },
+    ],
     "no-async-promise-executor": ["off"],
     "no-empty-pattern": ["off"],
     "no-prototype-builtins": ["off"],
@@ -37,5 +43,10 @@ module.exports = {
     "semi": ["error", "always"],
     "sort-keys": ["off"],
     "spaced-comment": ["off"],
+    "unused-imports/no-unused-imports-ts": "warn",
+    "unused-imports/no-unused-vars-ts": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" },
+    ],
   },
 };

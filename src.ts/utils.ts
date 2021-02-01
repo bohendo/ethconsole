@@ -1,13 +1,11 @@
-import { Provider } from "@ethersproject/abstract-provider";
-import { Signer } from "@ethersproject/abstract-signer";
+import { Interface } from "@ethersproject/abi";
 import { BigNumber } from "@ethersproject/bignumber";
-import { parseEther } from "@ethersproject/units";
-import { Contract, getDefaultProvider, providers, utils, Wallet } from "ethers";
+import { Contract } from "@ethersproject/contracts";
+import { formatEther, parseEther } from "@ethersproject/units";
 
 import { artifacts } from "./artifacts";
-import { alice, bob, env } from "./constants";
 
-export const toHumanReadable = (abi: any) => (new utils.Interface(abi)).format();
+export const toHumanReadable = (abi: any) => (new Interface(abi)).format();
 
 export const log = (msg: any) => {
   const prefix = `\n`;
@@ -15,7 +13,7 @@ export const log = (msg: any) => {
     console.log(msg);
   } else if (typeof msg === "object") {
     if (msg._isBigNumber) {
-      console.log(prefix + utils.formatEther(msg));
+      console.log(prefix + formatEther(msg));
     } else {
       console.log(prefix + JSON.stringify(msg, undefined, 2));
     }
@@ -108,13 +106,10 @@ export const getTokenSafeMinimums = async (
     const token0 = await pair.token0();
     let wethReserves;
     let tokenReserves;
-    let token;
     if (token0 === wethAddress) {
       [wethReserves, tokenReserves] = await pair.getReserves();
-      token = await getContract("FakeToken", await pair.token1(), ethers);
     } else {
       [tokenReserves, wethReserves] = await pair.getReserves();
-      token = await getContract("FakeToken", token0, ethers);
     }
     const amountOut = await router.getAmountOut(
       getIntermediateSwapAmount(

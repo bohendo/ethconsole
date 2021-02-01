@@ -1,4 +1,4 @@
-import { Contract, getDefaultProvider, utils } from "ethers";
+import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
 

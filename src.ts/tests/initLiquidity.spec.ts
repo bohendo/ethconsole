@@ -1,13 +1,12 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import { Zero, AddressZero } from "@ethersproject/constants";
+import { Contract } from "@ethersproject/contracts";
 import { parseEther } from "@ethersproject/units";
-import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
 import { alice, bob, env, logger } from "../constants";
+import { getTokenSafeMinimums } from "../utils";
 
 import { expect } from "./utils";
-import { getTokenSafeMinimums } from "../utils";
 
 describe("Initialize Liquidity", function() {
   const log = logger.child({ module: "TestInitLiq" });
@@ -76,7 +75,7 @@ describe("Initialize Liquidity", function() {
   });
 
   it("should give liquidity tokens to msg.sender", async () => {
-    const liqManagerAddress = await initLiquidity();
+    await initLiquidity();
     for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -138,7 +137,7 @@ describe("Initialize Liquidity", function() {
         initialReserves[name] = (await pair.getReserves())[0];
       }
     }
-    const liqManagerAddress = await initLiquidity();
+    await initLiquidity();
     for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -168,7 +167,7 @@ describe("Initialize Liquidity", function() {
         initialReserves[name] = (await pair.getReserves())[1];
       }
     }
-    const liqManagerAddress = await initLiquidity();
+    await initLiquidity();
     for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);

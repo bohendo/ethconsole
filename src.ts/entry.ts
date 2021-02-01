@@ -2,9 +2,8 @@ import * as eth from "ethers";
 
 import { ledger, getLedgerSigner } from "./ledger";
 import { provider, wallets } from "./constants";
-import { log, sqrt, toHumanReadable } from "./utils";
-
 import { eth2, liqManager, maker, tokens, tornado, uniswap, yearn } from "./lib";
+import { log, sqrt, toHumanReadable } from "./utils";
 
 // Attach exported utils to global for easy access in the console
 const setGlobal = (key: string, value: any): void => {

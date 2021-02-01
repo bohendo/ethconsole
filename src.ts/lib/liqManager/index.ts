@@ -1,6 +1,5 @@
-import { ContractFactory, utils } from "ethers";
+import { ContractFactory } from "@ethersproject/contracts";
 
-import { provider } from "../../constants";
 import { artifacts } from "../../artifacts";
 
 export const liqManagerFactory = ContractFactory.fromSolidity(artifacts["LiquidityManager"]);
