@@ -74,7 +74,8 @@ const func: DeployFunction = async () => {
   log.info("All done!");
   const spent = formatEther(balance.sub(await provider.getBalance(deployer)));
   const nTx = (await provider.getTransactionCount(deployer)) - nonce;
-  log.info(`Sent ${nTx} transaction${nTx === 1 ? "" : "s"} & spent ${EtherSymbol} ${spent}`);
+  log.info(`Sent ${nTx} transaction${nTx === 1 ? "" : "s"} & spent ${EtherSymbol} ${spent} deploying tokens`);
+  log.info(` `);
 };
 export default func;
 module.exports.tags = ["Token"];

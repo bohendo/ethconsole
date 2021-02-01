@@ -16,7 +16,8 @@ const func: DeployFunction = async () => {
   // Log initial state
   const balance = await provider.getBalance(deployer);
   const nonce = await provider.getTransactionCount(deployer);
-  log.info(`Preparing to deploy Uniswap & seed liquidity on chain ${chainId}`);
+  log.info(` `);
+  log.info(`Preparing to deploy uniswap & seed liquidity on chain ${chainId}`);
   log.info(`Deployer address=${deployer} nonce=${nonce} balance=${formatEther(balance)}`);
 
   if (balance.eq(Zero)) {
@@ -138,7 +139,8 @@ const func: DeployFunction = async () => {
   log.info("All done!");
   const spent = formatEther(balance.sub(await provider.getBalance(deployer)));
   const nTx = (await provider.getTransactionCount(deployer)) - nonce;
-  log.info(`Sent ${nTx} transaction${nTx === 1 ? "" : "s"} & spent ${EtherSymbol} ${spent}`);
+  log.info(`Sent ${nTx} transaction${nTx === 1 ? "" : "s"} & spent ${EtherSymbol} ${spent} deploying uniswap & seeding liquidity`);
+  log.info(` `);
 };
 export default func;
 module.exports.dependencies = ["Tokens"];

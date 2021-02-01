@@ -4,7 +4,8 @@ import { parseEther } from "@ethersproject/units";
 import { ethers, deployments } from "hardhat";
 
 import { alice, bob, logger } from "../constants";
-import { getTokenSafeMinimums, initLiquidity } from "../utils";
+import { getTokenSafeMinimums } from "../utils";
+import { initLiq } from "../initLiq";
 
 import { expect } from "./utils";
 
@@ -40,8 +41,8 @@ describe("Initialize Liquidity", function() {
     }
   });
 
-  const initLiquidityTask = async (minTokens?: string[]): Promise<string> => {
-    const initLiqRes = await initLiquidity(
+  const initLiqTask = async (minTokens?: string[]): Promise<string> => {
+    const initLiqRes = await initLiq(
       weth.address,
       investAmount,
       pairs,
@@ -53,13 +54,13 @@ describe("Initialize Liquidity", function() {
   };
 
   it("should run without error", async () => {
-    const liqManagerAddress = await initLiquidityTask();
+    const liqManagerAddress = await initLiqTask();
     log.info(`Got liqManagerAddress = ${liqManagerAddress}`);
     expect(liqManagerAddress).not.equals(AddressZero);
   });
 
   it("should have zero balance leftover for all tokens", async () => {
-    const liqManagerAddress = await initLiquidityTask();
+    const liqManagerAddress = await initLiqTask();
     for (const name of [ ...Object.keys(investPortfolio), "WETH"]) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const tokenBalance = await token.balanceOf(liqManagerAddress);
@@ -69,7 +70,7 @@ describe("Initialize Liquidity", function() {
   });
 
   it("should give liquidity tokens to msg.sender", async () => {
-    await initLiquidityTask();
+    await initLiqTask();
     for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -110,7 +111,7 @@ describe("Initialize Liquidity", function() {
     );
     // Third, execute liquidity initialization
     log.info(`TEST tokenMinimums: ${tokenMinimums}`);
-    await expect(initLiquidity(
+    await expect(initLiq(
       weth.address,
       investAmount,
       pairs,
@@ -133,7 +134,7 @@ describe("Initialize Liquidity", function() {
         initialReserves[name] = (await pair.getReserves())[0];
       }
     }
-    await initLiquidityTask();
+    await initLiqTask();
     for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -163,7 +164,7 @@ describe("Initialize Liquidity", function() {
         initialReserves[name] = (await pair.getReserves())[1];
       }
     }
-    await initLiquidityTask();
+    await initLiqTask();
     for (const name of Object.keys(investPortfolio)) {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
@@ -185,7 +186,7 @@ describe("Initialize Liquidity", function() {
   });
 
   it("should not deploy any code to the contract address", async () => {
-    const liqManagerAddress = await initLiquidityTask();
+    const liqManagerAddress = await initLiqTask();
     const code = await ethers.provider.getCode(liqManagerAddress);
     log.info(`Got liqManagerAddress with ${code.length/2-1} bytes of code: ${code}`);
     expect(code.replace(/^0x/, "")).to.equal("");
