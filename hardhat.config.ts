@@ -58,6 +58,7 @@ const config: HardhatUserConfig = {
     localhost: {
       accounts: { mnemonic },
       chainId,
+      gasPrice: parseUnits("100", "gwei").toNumber(),
       loggingEnabled: false,
       saveDeployments: false,
       url: urlOverride || "http://localhost:8545",

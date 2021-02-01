@@ -55,7 +55,7 @@ const func: DeployFunction = async () => {
   };
 
   // Only deploy uniswap on a local network
-  if (network.name === "hardhat") {
+  if (network.name === "hardhat" || network.name === "localhost") {
     log.info(`Running localnet migration`);
     for (const row of [
       ["WETH", []],

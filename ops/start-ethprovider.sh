@@ -17,13 +17,9 @@ fi
 
 image="${project}_ethprovider:latest"
 
-flag="$root/.migration-complete"
-rm -rf "$flag"
-
 # Mount repo into ethprovider:/root to trigger migration at startup
 docker run \
   --detach \
-  --env "MNEMONIC=candy maple cake sugar pudding cream honey rich smooth crumble sweet treat" \
   --mount "type=bind,source=$root,target=/root" \
   --name "$name" \
   --network "$project" \
@@ -32,10 +28,14 @@ docker run \
   --tmpfs "/tmp" \
   "$image"
 
-while [[ ! -f "$flag" ]]
+while !  curl -q -s -k -s -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"id":31415,"jsonrpc":"2.0","method":"eth_chainId","params":[]}' \
+  http://localhost:8545 > /dev/null
 do
   if grep -qs "$name" <<<"$(docker container ls)"
   then sleep 1
   else echo "Ethprovider failed to start up" && exit 1
   fi
 done
+echo "Good morning, ethprovider!"
