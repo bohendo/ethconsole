@@ -139,11 +139,26 @@ export const initLiquidity = async (
   pairs: string[],
   allocations: string[],
   signer: Signer,
+  minTokens: string[] = [],
 ): Promise<any> => {
   const log = logger.child({ module: "InitLiquidity" });
   const provider = signer.provider!;
   if (!provider) {
     throw new Error(`Fatal: signer must be connect to a provider`);
+  }
+
+  log.info(`Verifying provided parameters..`);
+
+  if (!(minTokens.length === 0 || minTokens.length === 4)) {
+    throw new Error(`If you supply min tokens it must include 4 entries, not ${minTokens.length}`);
+  }
+
+  if (pairs.length !== 4) {
+    throw new Error(`You must supply exactly 4 pairs but you supplied ${pairs.length}`);
+  }
+
+  if (allocations.length !== 4) {
+    throw new Error(`You must supply exactly 4 allocations but you supplied ${allocations.length}`);
   }
 
   const ethAllocations = [] as BigNumber[];
@@ -158,13 +173,21 @@ export const initLiquidity = async (
 
   const tokenNames = await getTokenNames(wethAddress, pairs, provider);
 
-  const tokenMinimums = await getTokenSafeMinimums(
-    wethAddress,
-    amount,
-    pairs,
-    allocations,
-    provider,
-  );
+  let tokenMinimums: string[];
+  log.info(`Provided min tokens: ${minTokens}`);
+  if (minTokens.length === 4) {
+    log.warn(`Using provided token minimums instead of determining them from chain state`);
+    tokenMinimums = minTokens;
+  } else {
+    log.info(`Determining the minimum amount of tokens we should receive form chain state..`);
+    tokenMinimums = await getTokenSafeMinimums(
+      wethAddress,
+      amount,
+      pairs,
+      allocations,
+      provider,
+    );
+  }
 
   log.info(`Preparing to invest a total of ${amount} ${EtherSymbol}:`);
   for (let i = 0; i < pairs.length; i++) {
@@ -174,19 +197,13 @@ export const initLiquidity = async (
   }
 
   const factory = ContractFactory.fromSolidity(artifacts["LiquidityManager"]).connect(signer);
-  log.info(`Let's goooo:`);
-  log.info(`- ${wethAddress}`);
-  log.info(`- ${pairs}`);
-  log.info(`- ${allocations}`);
-  log.info(`- ${tokenMinimums}`);
-  const result = await factory.deploy(
+  const deployment = await factory.deploy(
     wethAddress,
     pairs,
     allocations,
     tokenMinimums,
     { value: parseEther(amount) },
   );
-  log.info(result);
-  const receipt = await provider.getTransactionReceipt(result.deployTransaction.hash);
-  return { ...result.deployTransaction, ...receipt };
+  await provider.getTransactionReceipt(deployment.deployTransaction.hash);
+  return deployment;
 };

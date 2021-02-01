@@ -1,9 +1,9 @@
 import { Zero, AddressZero } from "@ethersproject/constants";
 import { Contract } from "@ethersproject/contracts";
 import { parseEther } from "@ethersproject/units";
-import { ethers, deployments, run } from "hardhat";
+import { ethers, deployments } from "hardhat";
 
-import { alice, bob, env, logger } from "../constants";
+import { alice, bob, logger } from "../constants";
 import { getTokenSafeMinimums, initLiquidity } from "../utils";
 
 import { expect } from "./utils";
@@ -29,14 +29,7 @@ describe("Initialize Liquidity", function() {
     weth = await (ethers as any).getContract("WETH", signerAddress);
     pairs = [];
     allocations = [];
-    for (const [name, allocation] of [
-      ["FakeAAVE", "30"],
-      ["FakeCOMP", "30"],
-      ["FakeMKR",  "0"],
-      ["FakeUNI",  "0"],
-      ["FakeWBTC", "10"],
-      ["FakeYFI",  "30"],
-    ]) {
+    for (const [name, allocation] of Object.entries(investPortfolio)) {
       if (parseEther(allocation).lte(Zero)) {
         continue;
       }
@@ -48,32 +41,21 @@ describe("Initialize Liquidity", function() {
   });
 
   const initLiquidityTask = async (minTokens?: string[]): Promise<string> => {
-    return await run("init-liquidity", {
-      signerAddress: bob.address,
-      amount: investAmount,
-      pairs,
-      allocations,
-      minTokens: minTokens || [],
-      logLevel: env.logLevel,
-    });
-  };
-
-  it.only("should run without error", async () => {
-    const liqManagerAddress = await initLiquidityTask();
-    log.info(`Got liqManagerAddress = ${liqManagerAddress}`);
-    expect(liqManagerAddress).not.equals(AddressZero);
-  });
-
-  it.only("should run without error as a standalone util", async () => {
-    const liqInitRes = await initLiquidity(
+    const initLiqRes = await initLiquidity(
       weth.address,
       investAmount,
       pairs,
       allocations,
       await (ethers as any).getSigner(bob.address),
+      minTokens || [],
     );
-    log.info(`Got liqInitRes = ${JSON.stringify(liqInitRes, null, 2)}`);
-    expect(liqInitRes).to.be.ok;
+    return initLiqRes.address;
+  };
+
+  it("should run without error", async () => {
+    const liqManagerAddress = await initLiquidityTask();
+    log.info(`Got liqManagerAddress = ${liqManagerAddress}`);
+    expect(liqManagerAddress).not.equals(AddressZero);
   });
 
   it("should have zero balance leftover for all tokens", async () => {
@@ -101,6 +83,7 @@ describe("Initialize Liquidity", function() {
   it("should revert if swap returns too few tokens", async () => {
     const router = await (ethers as any).getContract("UniswapRouter", alice.address);
     // First, determine the safe token minimums given the current chain state
+    log.info(`Getting token minimums..`);
     const tokenMinimums = await getTokenSafeMinimums(
       weth.address,
       investAmount,
@@ -117,6 +100,7 @@ describe("Initialize Liquidity", function() {
     } else {
       tokenAddress = token0;
     }
+    log.info(`Swapping some shit`);
     router.swapExactETHForTokens(
       Zero,
       [weth.address, tokenAddress],
@@ -126,14 +110,14 @@ describe("Initialize Liquidity", function() {
     );
     // Third, execute liquidity initialization
     log.info(`TEST tokenMinimums: ${tokenMinimums}`);
-    await expect(run("init-liquidity", {
-      signerAddress: bob.address,
-      amount: "1.5",
+    await expect(initLiquidity(
+      weth.address,
+      investAmount,
       pairs,
       allocations,
-      minTokens: tokenMinimums,
-      logLevel: env.logLevel,
-    })).to.be.revertedWith("Liquidity Manager: TOO_FEW_TOKENS");
+      await (ethers as any).getSigner(bob.address),
+      tokenMinimums,
+    )).to.be.revertedWith("Liquidity Manager: TOO_FEW_TOKENS");
   });
 
   it("should have same token reserve before and after", async () => {
