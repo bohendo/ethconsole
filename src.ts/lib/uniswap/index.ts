@@ -1,6 +1,6 @@
 import { Contract, utils } from "ethers";
 
-import { provider } from "../utils";
+import { provider } from "../../constants";
 
 import pairAbi from "./pair.json";
 import factoryAbi from "./factory.json";
