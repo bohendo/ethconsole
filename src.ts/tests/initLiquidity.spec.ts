@@ -4,7 +4,7 @@ import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
-import { alice, bob, defaultLogLevel, logger, provider } from "../constants";
+import { alice, bob, env, logger, provider } from "../constants";
 
 import { expect } from "./utils";
 import { getTokenSafeMinimums } from "../utils";
@@ -55,7 +55,7 @@ describe("Initialize Liquidity", function() {
       pairs,
       allocations,
       minTokens: minTokens || [],
-      logLevel: defaultLogLevel,
+      logLevel: env.logLevel,
     });
   };
 
@@ -121,7 +121,7 @@ describe("Initialize Liquidity", function() {
       pairs,
       allocations,
       minTokens: tokenMinimums,
-      logLevel: defaultLogLevel,
+      logLevel: env.logLevel,
     })).to.be.revertedWith("Liquidity Manager: TOO_FEW_TOKENS");
   });
 

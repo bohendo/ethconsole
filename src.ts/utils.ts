@@ -1,28 +1,11 @@
+import { Provider } from "@ethersproject/abstract-provider";
+import { Signer } from "@ethersproject/abstract-signer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseEther } from "@ethersproject/units";
 import { Contract, getDefaultProvider, providers, utils, Wallet } from "ethers";
 
 import { artifacts } from "./artifacts";
-import { alice, bob, defaultLogLevel } from "./constants";
-
-const env = {
-  ethProviderUrl: process?.env?.ETH_PROVIDER || undefined,
-  mnemonic:
-    process?.env?.ETH_MNEMONIC ||
-    "candy maple cake sugar pudding cream honey rich smooth crumble sweet treat",
-};
-
-if (env.ethProviderUrl) {
-  console.log(`Connecting to provider ${env.ethProviderUrl.split("/").splice(0, 3).join("/")}`);
-} else {
-  console.warn("Connecting to default provider");
-}
-
-export const provider = env.ethProviderUrl
-  ? new providers.JsonRpcProvider(env.ethProviderUrl)
-  : getDefaultProvider("homestead");
-
-export const wallet = Wallet.fromMnemonic(env.mnemonic).connect(provider);
+import { alice, bob, env } from "./constants";
 
 export const toHumanReadable = (abi: any) => (new utils.Interface(abi)).format();
 
@@ -77,7 +60,7 @@ export const getContract = async (
 
   } else if (address) { // TODO: how should we handle ENS names? Esp on localnet..
     if (artifacts[name] && artifacts[name].abi) {
-      return new Contract(address, artifacts[name].abi, provider);
+      return new Contract(address, artifacts[name].abi);
     } else {
       throw new Error(`No artifacts or ABI are available for ${name}`);
     }
@@ -118,26 +101,20 @@ export const getTokenSafeMinimums = async (
   ethers: any,
 ): Promise<string[]> => {
   const tokenMinimums = [] as string[];
-  const router = await (ethers as any).getContract("UniswapRouter");
+  const router = await getContract("UniswapRouter", undefined, ethers);
   for (let i = 0; i < pairs.length; i++) {
     const pairAddress = pairs[i];
-    const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress);
+    const pair = await getContract("UniswapPair", pairAddress, ethers);
     const token0 = await pair.token0();
     let wethReserves;
     let tokenReserves;
     let token;
     if (token0 === wethAddress) {
       [wethReserves, tokenReserves] = await pair.getReserves();
-      token = await (ethers as any).getContractAt(
-        "FakeToken",
-        await pair.token1(),
-      );
+      token = await getContract("FakeToken", await pair.token1(), ethers);
     } else {
       [tokenReserves, wethReserves] = await pair.getReserves();
-      token = await (ethers as any).getContractAt(
-        "FakeToken",
-        token0,
-      );
+      token = await getContract("FakeToken", token0, ethers);
     }
     const amountOut = await router.getAmountOut(
       getIntermediateSwapAmount(

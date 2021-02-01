@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "@ethersproject/abi": "5.0.10",
+    "@ethersproject/abstract-signer": "5.0.11",
+    "@ethersproject/abstract-provider": "5.0.8",
     "@ethersproject/bignumber": "5.0.12",
     "@ethersproject/constants": "5.0.7",
     "@ethersproject/hardware-wallets": "5.0.12",

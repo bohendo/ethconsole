@@ -4,7 +4,8 @@ import { formatEther, parseEther } from "@ethersproject/units";
 import { deployments, ethers, getNamedAccounts, getChainId, network, run } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 
-import { defaultLogLevel, logger } from "../constants";
+import { env, logger } from "../constants";
+import { getContract } from "../utils";
 
 const func: DeployFunction = async () => {
   const log = logger.child({ module: "Deploy" });
@@ -44,8 +45,8 @@ const func: DeployFunction = async () => {
     if (!deployment.transactionHash) {
       throw new Error(`Failed to deploy ${name}`);
     }
-    const tx = await ethers.provider.getTransaction(deployment.transactionHash!);
-    const receipt = await ethers.provider.getTransactionReceipt(deployment.transactionHash!);
+    const tx = await provider.getTransaction(deployment.transactionHash!);
+    const receipt = await provider.getTransactionReceipt(deployment.transactionHash!);
     log.info(`Sent transaction to deploy ${name}, txHash: ${deployment.transactionHash}`);
     log.info(
       `Success! Consumed ${receipt.gasUsed} gas worth ${EtherSymbol} ${formatEther(
@@ -73,7 +74,7 @@ const func: DeployFunction = async () => {
       await migrate(name, args);
     }
 
-    const WETH = await (ethers as any).getContract("WETH");
+    const WETH = await getContract("WETH", undefined, ethers);
     await (await WETH.deposit({ value: parseEther("100000") })).wait();
     log.info(`Deposited a bunch of ETH to generate ${await WETH.balanceOf(deployer)} WETH`);
 
@@ -85,7 +86,7 @@ const func: DeployFunction = async () => {
       ["FakeWBTC", "0.041"],
       ["FakeYFI", "0.045"],
     ]) {
-      const token = await (ethers as any).getContract(name);
+      const token = await getContract(name, undefined, ethers);
       log.info(`Creating uniswap pair for ${name}`);
       await run("create-uni-pair", {
         signerAddress: deployer,
@@ -93,7 +94,7 @@ const func: DeployFunction = async () => {
         tokenB: token.address,
         amountA: "10000",
         amountB: formatEther(parseEther(price).mul(10000)),
-        logLevel: defaultLogLevel,
+        logLevel: env.logLevel,
       });
     }
 

@@ -20,9 +20,13 @@ module.exports = {
   },
   plugins: ["import", "@typescript-eslint"],
   rules: {
-    "@typescript-eslint/no-unused-expressions": ["off"],
     "comma-dangle": ["error", "always-multiline"],
-    "max-len": ["warn", { code: 100, ignoreStrings: true, ignoreTemplateLiterals: true, ignoreComments: true }],
+    "max-len": ["warn", {
+      code: 100,
+      ignoreStrings: true,
+      ignoreTemplateLiterals: true,
+      ignoreComments: true,
+    }],
     "no-async-promise-executor": ["off"],
     "no-empty-pattern": ["off"],
     "no-prototype-builtins": ["off"],

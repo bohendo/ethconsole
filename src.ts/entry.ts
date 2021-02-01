@@ -1,14 +1,10 @@
 import * as eth from "ethers";
 
 import { ledger, getLedgerSigner } from "./ledger";
-import { log, provider, sqrt, wallet, toHumanReadable } from "./utils";
+import { provider, wallets } from "./constants";
+import { log, sqrt, toHumanReadable } from "./utils";
 
-import * as eth2 from "./eth2";
-import * as maker from "./maker";
-import { usdc } from "./tokens";
-import * as tornado from "./tornado";
-import * as uniswap from "./uniswap";
-import * as yearn from "./yearn";
+import { eth2, maker, tokens, tornado, uniswap, yearn } from "./lib";
 
 // Attach exported utils to global for easy access in the console
 const setGlobal = (key: string, value: any): void => {
@@ -19,7 +15,7 @@ setGlobal("eth2", eth2);
 setGlobal("maker", maker);
 setGlobal("tornado", tornado);
 setGlobal("uniswap", uniswap);
-setGlobal("usdc", usdc);
+setGlobal("usdc", tokens.usdc);
 setGlobal("yearn", yearn);
 
 setGlobal("BN", eth.BigNumber.from);
@@ -30,4 +26,4 @@ setGlobal("log", log);
 setGlobal("provider", provider);
 setGlobal("sqrt", sqrt);
 setGlobal("toHumanReadable", toHumanReadable);
-setGlobal("wallet", wallet);
+setGlobal("wallets", wallets);
