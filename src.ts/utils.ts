@@ -47,6 +47,7 @@ export const getIntermediateSwapAmount = (
     return ((sqrt(a.add(c))).sub(b)).div(1994);
 };
 
+// Typescript translation of UniswapLibrary.sol#getAmountOut
 export const getAmountOut = (
   amountIn: BigNumber,
   reserveIn: BigNumber,
@@ -67,26 +68,13 @@ export const getAmountOut = (
 
 export const getContract = async (
   name: string,
-  address?: string,
-  ethers?: any, // hardhat-deploy-ethers
+  address: string,
+  provider?: Provider,
 ): Promise<Contract> => {
-  if (ethers && address && typeof ethers.getContractAt === "function") {
-    return ethers.getContractAt(name, address);
-
-  } else if (ethers && typeof ethers.getContract === "function") {
-    return ethers.getContract(name);
-
-  } else if (address) { // TODO: how should we handle ENS names? Esp on localnet..
-    if (artifacts[name] && artifacts[name].abi) {
-      return new Contract(address, artifacts[name].abi);
-    } else {
-      throw new Error(`No artifacts or ABI are available for ${name}`);
-    }
-
+  if (artifacts[name] && artifacts[name].abi) {
+    return new Contract(address, artifacts[name].abi, provider);
   } else {
-    throw new Error(
-      `Either an address or hardhat-deploy-ethers must be provided to get contract ${name}`,
-    );
+    throw new Error(`No artifacts or ABI are available for ${name}`);
   }
 };
 
@@ -98,13 +86,13 @@ export const getTokenNames = async (
   const tokenNames = [] as string[];
   for (let i = 0; i < pairs.length; i++) {
     const pairAddress = pairs[i];
-    const pair = (await getContract("UniswapPair", pairAddress)).connect(provider);
+    const pair = await getContract("UniswapPair", pairAddress, provider);
     const token0 = await pair.token0();
     let token;
     if (token0 === wethAddress) {
-      token = (await getContract("FakeToken", await pair.token1())).connect(provider);
+      token = await getContract("FakeToken", await pair.token1(), provider);
     } else {
-      token = (await getContract("FakeToken", token0)).connect(provider);
+      token = await getContract("FakeToken", token0, provider);
     }
     tokenNames.push(await token.name());
   }
@@ -121,7 +109,7 @@ export const getTokenSafeMinimums = async (
   const tokenMinimums = [] as string[];
   for (let i = 0; i < pairs.length; i++) {
     const pairAddress = pairs[i];
-    const pair = (await getContract("UniswapPair", pairAddress)).connect(provider);
+    const pair = await getContract("UniswapPair", pairAddress, provider);
     const token0 = await pair.token0();
     let wethReserves;
     let tokenReserves;
