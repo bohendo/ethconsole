@@ -9,6 +9,12 @@ export const deployments = {} as any;
 // 1 - mainnet
 import * as mainnetAAVE from "../deployments/mainnet/AAVE.json";
 import * as mainnetCOMP from "../deployments/mainnet/COMP.json";
+import * as mainnetUniswapPair_ETH_AAVE from "../deployments/mainnet/UniswapPair_ETH_AAVE.json";
+import * as mainnetUniswapPair_ETH_COMP from "../deployments/mainnet/UniswapPair_ETH_COMP.json";
+import * as mainnetUniswapPair_ETH_MKR from "../deployments/mainnet/UniswapPair_ETH_MKR.json";
+import * as mainnetUniswapPair_ETH_UNI from "../deployments/mainnet/UniswapPair_ETH_UNI.json";
+import * as mainnetUniswapPair_ETH_WBTC from "../deployments/mainnet/UniswapPair_ETH_WBTC.json";
+import * as mainnetUniswapPair_ETH_YFI from "../deployments/mainnet/UniswapPair_ETH_YFI.json";
 import * as mainnetDAI from "../deployments/mainnet/DAI.json";
 import * as mainnetMKR from "../deployments/mainnet/MKR.json";
 import * as mainnetUNI from "../deployments/mainnet/UNI.json";
@@ -24,6 +30,12 @@ const mainnetDeployment = {
   MKR: mainnetMKR,
   UNI: mainnetUNI,
   UniswapFactory: mainnetUniswapFactory,
+  Uni_ETH_AAVE: mainnetUniswapPair_ETH_AAVE,
+  Uni_ETH_COMP: mainnetUniswapPair_ETH_COMP,
+  Uni_ETH_MKR: mainnetUniswapPair_ETH_MKR,
+  Uni_ETH_UNI: mainnetUniswapPair_ETH_UNI,
+  Uni_ETH_WBTC: mainnetUniswapPair_ETH_WBTC,
+  Uni_ETH_YFI: mainnetUniswapPair_ETH_YFI,
   UniswapRouter: mainnetUniswapRouter,
   WBTC: mainnetWBTC,
   WETH: mainnetWETH,
