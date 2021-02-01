@@ -7,7 +7,9 @@ if [[ -f "./$1" ]]
 then arg="--require ./$1"
 fi
 
-node --no-deprecation --interactive --require $root/build/entry.js "$arg"
+cd "$root/build" || exit 1
+node --no-deprecation --interactive --require "./src.ts/entry.js" "$arg"
+# "$root/node_modules/.bin/hardhat" console
 
 exit # Don't use docker until/unless we figure out how usb connections work
 

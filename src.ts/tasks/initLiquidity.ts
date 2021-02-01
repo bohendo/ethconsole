@@ -38,7 +38,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
       throw new Error(`You must supply exactly 4 allocations but you supplied ${allocations.length}`);
     }
 
-    let ethAllocations = [] as BigNumber[];
+    const ethAllocations = [] as BigNumber[];
     let totalAllocation = Zero;
     for (const allocation of allocations) {
       totalAllocation = totalAllocation.add(BigNumber.from(allocation));
@@ -51,12 +51,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     ////////////////////////////////////////
     // Determine the minimum tokens to receive from intermediate swaps
 
-
-    const tokenNames = await getTokenNames(
-      weth.address,
-      pairs,
-      hre.ethers,
-    );
+    const tokenNames = await getTokenNames(weth.address, pairs, hre.ethers);
     let tokenMinimums: string[];
     log.info(`Provided min tokens: ${minTokens}`);
     if (minTokens.length === 4) {

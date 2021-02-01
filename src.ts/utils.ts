@@ -1,7 +1,8 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { parseEther } from "@ethersproject/units";
-import { getDefaultProvider, providers, utils, Wallet } from "ethers";
+import { Contract, getDefaultProvider, providers, utils, Wallet } from "ethers";
 
+import { artifacts } from "./artifacts";
 import { alice, bob, defaultLogLevel } from "./constants";
 
 const env = {
@@ -20,7 +21,6 @@ if (env.ethProviderUrl) {
 export const provider = env.ethProviderUrl
   ? new providers.JsonRpcProvider(env.ethProviderUrl)
   : getDefaultProvider("homestead");
-
 
 export const wallet = Wallet.fromMnemonic(env.mnemonic).connect(provider);
 
@@ -64,27 +64,46 @@ export const getIntermediateSwapAmount = (
     return ((sqrt(a.add(c))).sub(b)).div(1994);
 };
 
+export const getContract = async (
+  name: string,
+  address?: string,
+  ethers?: any, // hardhat-deploy-ethers
+): Promise<Contract> => {
+  if (ethers && address && typeof ethers.getContractAt === "function") {
+    return ethers.getContractAt(name, address);
+
+  } else if (ethers && typeof ethers.getContract === "function") {
+    return ethers.getContract(name);
+
+  } else if (address) { // TODO: how should we handle ENS names? Esp on localnet..
+    if (artifacts[name] && artifacts[name].abi) {
+      return new Contract(address, artifacts[name].abi, provider);
+    } else {
+      throw new Error(`No artifacts or ABI are available for ${name}`);
+    }
+
+  } else {
+    throw new Error(
+      `Either an address or hardhat-deploy-ethers must be provided to get contract ${name}`,
+    );
+  }
+};
+
 export const getTokenNames = async (
   wethAddress: string,
   pairs: string[],
-  ethers: any,
+  ethers?: any,
 ): Promise<string[]> => {
   const tokenNames = [] as string[];
   for (let i = 0; i < pairs.length; i++) {
     const pairAddress = pairs[i];
-    const pair = await ethers.getContractAt("UniswapPair", pairAddress);
+    const pair = await getContract("UniswapPair", pairAddress, ethers);
     const token0 = await pair.token0();
     let token;
     if (token0 === wethAddress) {
-      token = await ethers.getContractAt(
-        "FakeToken",
-        await pair.token1(),
-      );
+      token = await getContract("FakeToken", await pair.token1(), ethers);
     } else {
-      token = await ethers.getContractAt(
-        "FakeToken",
-        token0,
-      );
+      token = await getContract("FakeToken", token0, ethers);
     }
     tokenNames.push(await token.name());
   }
