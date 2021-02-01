@@ -4,7 +4,7 @@ import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
-import { alice, bob, env, logger, provider } from "../constants";
+import { alice, bob, env, logger } from "../constants";
 
 import { expect } from "./utils";
 import { getTokenSafeMinimums } from "../utils";
@@ -191,7 +191,7 @@ describe("Initialize Liquidity", function() {
 
   it("should not deploy any code to the contract address", async () => {
     const liqManagerAddress = await initLiquidity();
-    const code = await provider.getCode(liqManagerAddress);
+    const code = await ethers.provider.getCode(liqManagerAddress);
     log.info(`Got liqManagerAddress with ${code.length/2-1} bytes of code: ${code}`);
     expect(code.replace(/^0x/, "")).to.equal("");
   });
