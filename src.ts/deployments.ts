@@ -41,6 +41,12 @@ import * as localhostFakeUNI from "../deployments/localhost/FakeUNI.json";
 import * as localhostFakeWBTC from "../deployments/localhost/FakeWBTC.json";
 import * as localhostFakeYFI from "../deployments/localhost/FakeYFI.json";
 import * as localhostUniswapFactory from "../deployments/localhost/UniswapFactory.json";
+import * as localhostUniswapPair_ETH_AAVE from "../deployments/localhost/UniswapPair_ETH_AAVE.json";
+import * as localhostUniswapPair_ETH_COMP from "../deployments/localhost/UniswapPair_ETH_COMP.json";
+import * as localhostUniswapPair_ETH_MKR from "../deployments/localhost/UniswapPair_ETH_MKR.json";
+import * as localhostUniswapPair_ETH_UNI from "../deployments/localhost/UniswapPair_ETH_UNI.json";
+import * as localhostUniswapPair_ETH_WBTC from "../deployments/localhost/UniswapPair_ETH_WBTC.json";
+import * as localhostUniswapPair_ETH_YFI from "../deployments/localhost/UniswapPair_ETH_YFI.json";
 import * as localhostUniswapRouter from "../deployments/localhost/UniswapRouter.json";
 import * as localhostWETH from "../deployments/localhost/WETH.json";
 const localhostDeployment = {
@@ -49,6 +55,12 @@ const localhostDeployment = {
   MKR: localhostFakeMKR,
   UNI: localhostFakeUNI,
   UniswapFactory: localhostUniswapFactory,
+  Uni_ETH_AAVE: localhostUniswapPair_ETH_AAVE,
+  Uni_ETH_COMP: localhostUniswapPair_ETH_COMP,
+  Uni_ETH_MKR: localhostUniswapPair_ETH_MKR,
+  Uni_ETH_UNI: localhostUniswapPair_ETH_UNI,
+  Uni_ETH_WBTC: localhostUniswapPair_ETH_WBTC,
+  Uni_ETH_YFI: localhostUniswapPair_ETH_YFI,
   UniswapRouter: localhostUniswapRouter,
   WBTC: localhostFakeWBTC,
   WETH: localhostWETH,
@@ -56,4 +68,3 @@ const localhostDeployment = {
 };
 deployments.localhost = localhostDeployment;
 deployments["1337"] = localhostDeployment;
-
