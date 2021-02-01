@@ -2,7 +2,7 @@
 
 cmd="${1:-test}"
 
-export ETHCONSOLE_TEST=true
+export ETHCONSOLE_HARDHAT=true
 
 if [[ "$CI" == "true" ]]
 then opts="--forbid-only"

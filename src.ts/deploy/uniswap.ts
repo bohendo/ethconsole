@@ -74,9 +74,14 @@ const func: DeployFunction = async () => {
       await migrate(name, args);
     }
 
-    const WETH = await getContract("WETH", undefined, ethers);
-    await (await WETH.deposit({ value: parseEther("100000") })).wait();
-    log.info(`Deposited a bunch of ETH to generate ${await WETH.balanceOf(deployer)} WETH`);
+    const Weth = await getContract("WETH", undefined, ethers);
+    const wethBal = await Weth.balanceOf(deployer);
+    if (wethBal.eq(Zero)) {
+      await (await Weth.deposit({ value: parseEther("100000") })).wait();
+      log.info(`Deposited a bunch of ETH to generate ${await Weth.balanceOf(deployer)} WETH`);
+    } else {
+      log.info(`The deployer already has a balance of ${wethBal} WETH`);
+    }
 
     for (const [name, price] of [
       ["FakeAAVE", "4.5"],
@@ -90,7 +95,7 @@ const func: DeployFunction = async () => {
       log.info(`Creating uniswap pair for ${name}`);
       await run("create-uni-pair", {
         signerAddress: deployer,
-        tokenA: WETH.address,
+        tokenA: Weth.address,
         tokenB: token.address,
         amountA: "10000",
         amountB: formatEther(parseEther(price).mul(10000)),

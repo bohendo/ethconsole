@@ -5,7 +5,7 @@ import { Contract, getDefaultProvider, providers, utils } from "ethers";
 import pino from "pino";
 
 export const env = {
-  test: process?.env?.ETHCONSOLE_TEST || "",
+  hardhat: process?.env?.ETHCONSOLE_HARDHAT || "",
   logLevel: process?.env?.LOG_LEVEL || "info",
   ethProviderUrl: process?.env?.ETH_PROVIDER || "http://localhost:8545",
   mnemonic:
@@ -34,7 +34,7 @@ export const chainIdReq = provider.getNetwork().then(
   net => net.chainId,
 ).catch(
   e => {
-    if (!env.test) {
+    if (!env.hardhat) {
       console.log(`Failed to get chainId for provider ${env.ethProviderUrl}: ${e.message}`);
     }
   },
