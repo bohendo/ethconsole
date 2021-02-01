@@ -30,6 +30,12 @@ const config: HardhatUserConfig = {
         runs: 200,
       },
     },
+    overrides: {
+      "src.sol/LiquidityManager.sol": {
+        version: packageJson.devDependencies.solc,
+        settings: { optimizer: { enabled: true, runs: 1 } },
+      },
+    },
   },
   defaultNetwork: "hardhat",
   namedAccounts: {
