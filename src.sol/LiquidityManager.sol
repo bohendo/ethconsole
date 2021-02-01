@@ -65,7 +65,10 @@ contract LiquidityManager {
 
         // Return any WETH dust that's leftover
         uint balance = IERC20(_WETH).balanceOf(address(this));
-        if (balance > 0) TransferHelper.safeTransfer(_WETH, msg.sender, balance);
+        if (balance > 0) {
+          IWETH(_WETH).withdraw(balance);
+        }
+        selfdestruct(msg.sender);
     }
 
     // calculate amount of WETH to swap for token to add to pool

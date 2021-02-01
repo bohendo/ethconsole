@@ -4,7 +4,7 @@ import { parseEther } from "@ethersproject/units";
 import { Contract } from "ethers";
 import { ethers, deployments, run } from "hardhat";
 
-import { alice, bob, defaultLogLevel, logger } from "../constants";
+import { alice, bob, defaultLogLevel, logger, provider } from "../constants";
 
 import { expect } from "./utils";
 import { getTokenSafeMinimums } from "../utils";
@@ -69,7 +69,7 @@ describe("Initialize Liquidity", function() {
     const liqManagerAddress = await initLiquidity();
     for (const name of [ ...Object.keys(investPortfolio), "WETH"]) {
       const token = await (ethers as any).getContract(name, signerAddress);
-      let tokenBalance = await token.balanceOf(liqManagerAddress);
+      const tokenBalance = await token.balanceOf(liqManagerAddress);
       log.info(`Balance ${name}: ${tokenBalance.toString()}`);
       expect(tokenBalance.eq(Zero)).to.be.true;
     };
@@ -81,7 +81,7 @@ describe("Initialize Liquidity", function() {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
       const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
-      let liquidityTokenBalance = await pair.balanceOf(signerAddress);
+      const liquidityTokenBalance = await pair.balanceOf(signerAddress);
       console.log(`Balance ${name}-WETH Uniswap Pair: ${liquidityTokenBalance.toString()}`);
       expect(liquidityTokenBalance.gt(Zero)).to.be.true;
     }
@@ -131,7 +131,7 @@ describe("Initialize Liquidity", function() {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
       const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
-      let token0 = await pair.token0();
+      const token0 = await pair.token0();
       if (token0 === weth.address){
         initialReserves[name] = (await pair.getReserves())[1];
       } else {
@@ -144,7 +144,7 @@ describe("Initialize Liquidity", function() {
       const pairAddress = await factory.getPair(weth.address, token.address);
       let finalReserve;
       const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
-      let token0 = await pair.token0();
+      const token0 = await pair.token0();
       if (token0 === weth.address){
         finalReserve = (await pair.getReserves())[1];
       } else {
@@ -161,7 +161,7 @@ describe("Initialize Liquidity", function() {
       const token = await (ethers as any).getContract(name, signerAddress);
       const pairAddress = await factory.getPair(weth.address, token.address);
       const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
-      let token0 = await pair.token0();
+      const token0 = await pair.token0();
       if (token0 === weth.address){
         initialReserves[name] = (await pair.getReserves())[0];
       } else {
@@ -174,13 +174,13 @@ describe("Initialize Liquidity", function() {
       const pairAddress = await factory.getPair(weth.address, token.address);
       let finalReserve;
       const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress, signerAddress);
-      let token0 = await pair.token0();
+      const token0 = await pair.token0();
       if (token0 === weth.address){
         finalReserve = (await pair.getReserves())[0];
       } else {
         finalReserve = (await pair.getReserves())[1];
       }
-      let expectedReserve = initialReserves[name].add(parseEther(investAmount).mul(investPortfolio[name]).div("100"));
+      const expectedReserve = initialReserves[name].add(parseEther(investAmount).mul(investPortfolio[name]).div("100"));
       console.log(`${name}-WETH pool
        Initial WETH Reserve: ${initialReserves[name].toString()},
        Final WETH Reserve: ${finalReserve}
@@ -189,4 +189,10 @@ describe("Initialize Liquidity", function() {
     }
   });
 
+  it("should not deploy any code to the contract address", async () => {
+    const liqManagerAddress = await initLiquidity();
+    const code = await provider.getCode(liqManagerAddress);
+    log.info(`Got liqManagerAddress with ${code.length/2-1} bytes of code: ${code}`);
+    expect(code.replace(/^0x/, "")).to.equal("");
+  });
 });
