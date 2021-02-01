@@ -1,4 +1,4 @@
-import { Zero } from "@ethersproject/constants";
+import { AddressZero, Zero } from "@ethersproject/constants";
 import { formatEther, parseEther } from "@ethersproject/units";
 import { keccak256 } from "@ethersproject/keccak256";
 import { task } from "hardhat/config";
@@ -17,14 +17,14 @@ export default task("create-uni-pair", "Create a new UNI pair")
     const factory = await (hre.ethers as any).getContract("UniswapFactory", signerAddress);
     const router = await (hre.ethers as any).getContract("UniswapRouter", signerAddress);
 
-    const pairAddress = await factory.getPair(tokenA, tokenB);
-    const pairCode = await hre.ethers.provider.getCode(pairAddress);
+    let pairAddress = await factory.getPair(tokenA, tokenB);
     let tx;
 
-    if (pairCode.replace(/^0x/, "") === "") {
+    if (pairAddress === AddressZero) {
       log.info(`Using the factory at ${factory.address} to create a pair for ${tokenA} & ${tokenB}`);
       tx = await factory.createPair(tokenA, tokenB);
       await tx.wait();
+      pairAddress = await factory.getPair(tokenA, tokenB);
       log.info(`Successfully created pair at ${pairAddress} via tx ${tx.hash}`);
     } else {
       log.info(`A pair has already been created at ${pairAddress} for ${tokenA} & ${tokenB}`);
