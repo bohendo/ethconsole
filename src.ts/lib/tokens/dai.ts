@@ -1,21 +1,26 @@
-[
+import { Interface } from "@ethersproject/abi";
+import { Contract } from "@ethersproject/contracts";
+
+import { provider } from "../../constants";
+
+const daiAbi = [
   "constructor(uint256 chainId_)",
   "event Approval(address indexed src, address indexed guy, uint256 wad)",
   "event LogNote(bytes4 indexed sig, address indexed usr, bytes32 indexed arg1, bytes32 indexed arg2, bytes data) anonymous",
   "event Transfer(address indexed src, address indexed dst, uint256 wad)",
-  "function DOMAIN_SEPARATOR() view returns (bytes32)",
-  "function PERMIT_TYPEHASH() view returns (bytes32)",
   "function allowance(address, address) view returns (uint256)",
   "function approve(address usr, uint256 wad) returns (bool)",
   "function balanceOf(address) view returns (uint256)",
   "function burn(address usr, uint256 wad)",
   "function decimals() view returns (uint8)",
   "function deny(address guy)",
+  "function DOMAIN_SEPARATOR() view returns (bytes32)",
   "function mint(address usr, uint256 wad)",
   "function move(address src, address dst, uint256 wad)",
   "function name() view returns (string)",
   "function nonces(address) view returns (uint256)",
   "function permit(address holder, address spender, uint256 nonce, uint256 expiry, bool allowed, uint8 v, bytes32 r, bytes32 s)",
+  "function PERMIT_TYPEHASH() view returns (bytes32)",
   "function pull(address usr, uint256 wad)",
   "function push(address usr, uint256 wad)",
   "function rely(address guy)",
@@ -24,6 +29,11 @@
   "function transfer(address dst, uint256 wad) returns (bool)",
   "function transferFrom(address src, address dst, uint256 wad) returns (bool)",
   "function version() view returns (string)",
-  "function wards(address) view returns (uint256)"
-]
+  "function wards(address) view returns (uint256)",
+];
 
+export const dai = new Contract(
+  "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+  new Interface(daiAbi),
+  provider,
+);

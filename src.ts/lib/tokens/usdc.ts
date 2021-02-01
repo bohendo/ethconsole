@@ -3,7 +3,6 @@ import { Contract } from "@ethersproject/contracts";
 import { provider } from "../../constants";
 
 // USDC implementation is currently at 0xb7277a6e95992041568d9391d09d0122023778a2
-
 export const usdc = new Contract(
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   [
@@ -16,7 +15,6 @@ export const usdc = new Contract(
     "constructor(address _implementation)",
     "event AdminChanged(address previousAdmin, address newAdmin)",
     "event Upgraded(address implementation)",
-
     // From the implementation behind the proxy
     "event Approval(address indexed owner, address indexed spender, uint256 value)",
     "event AuthorizationCanceled(address indexed authorizer, bytes32 indexed nonce)",
@@ -35,27 +33,25 @@ export const usdc = new Contract(
     "event Transfer(address indexed from, address indexed to, uint256 value)",
     "event UnBlacklisted(address indexed _account)",
     "event Unpause()",
-    "function APPROVE_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
-    "function CANCEL_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
-    "function DECREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
-    "function DOMAIN_SEPARATOR() view returns (bytes32)",
-    "function INCREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
-    "function PERMIT_TYPEHASH() view returns (bytes32)",
-    "function TRANSFER_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
     "function allowance(address owner, address spender) view returns (uint256)",
     "function approve(address spender, uint256 value) returns (bool)",
+    "function APPROVE_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
     "function approveWithAuthorization(address owner, address spender, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)",
     "function authorizationState(address authorizer, bytes32 nonce) view returns (uint8)",
     "function balanceOf(address account) view returns (uint256)",
     "function blacklist(address _account)",
     "function blacklister() view returns (address)",
     "function burn(uint256 _amount)",
+    "function CANCEL_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
     "function cancelAuthorization(address authorizer, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)",
     "function configureMinter(address minter, uint256 minterAllowedAmount) returns (bool)",
     "function currency() view returns (string)",
     "function decimals() view returns (uint8)",
+    "function DECREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
     "function decreaseAllowance(address spender, uint256 decrement) returns (bool)",
     "function decreaseAllowanceWithAuthorization(address owner, address spender, uint256 decrement, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)",
+    "function DOMAIN_SEPARATOR() view returns (bytes32)",
+    "function INCREASE_ALLOWANCE_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
     "function increaseAllowance(address spender, uint256 increment) returns (bool)",
     "function increaseAllowanceWithAuthorization(address owner, address spender, uint256 increment, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)",
     "function initialize(string tokenName, string tokenSymbol, string tokenCurrency, uint8 tokenDecimals, address newMasterMinter, address newPauser, address newBlacklister, address newOwner)",
@@ -72,12 +68,14 @@ export const usdc = new Contract(
     "function paused() view returns (bool)",
     "function pauser() view returns (address)",
     "function permit(address owner, address spender, uint256 value, uint256 deadline, uint8 v, bytes32 r, bytes32 s)",
+    "function PERMIT_TYPEHASH() view returns (bytes32)",
     "function removeMinter(address minter) returns (bool)",
     "function rescueERC20(address tokenContract, address to, uint256 amount)",
     "function rescuer() view returns (address)",
     "function symbol() view returns (string)",
     "function totalSupply() view returns (uint256)",
     "function transfer(address to, uint256 value) returns (bool)",
+    "function TRANSFER_WITH_AUTHORIZATION_TYPEHASH() view returns (bytes32)",
     "function transferFrom(address from, address to, uint256 value) returns (bool)",
     "function transferOwnership(address newOwner)",
     "function transferWithAuthorization(address from, address to, uint256 value, uint256 validAfter, uint256 validBefore, bytes32 nonce, uint8 v, bytes32 r, bytes32 s)",
@@ -87,7 +85,6 @@ export const usdc = new Contract(
     "function updateMasterMinter(address _newMasterMinter)",
     "function updatePauser(address _newPauser)",
     "function updateRescuer(address newRescuer)",
-
   ],
   provider,
 );
