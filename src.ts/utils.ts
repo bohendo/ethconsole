@@ -1,6 +1,8 @@
 import { Interface } from "@ethersproject/abi";
+import { Provider } from "@ethersproject/abstract-provider";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
+import { Zero } from "@ethersproject/constants";
 import { formatEther, parseEther } from "@ethersproject/units";
 
 import { artifacts } from "./artifacts";
@@ -45,6 +47,24 @@ export const getIntermediateSwapAmount = (
     return ((sqrt(a.add(c))).sub(b)).div(1994);
 };
 
+export const getAmountOut = (
+  amountIn: BigNumber,
+  reserveIn: BigNumber,
+  reserveOut: BigNumber,
+): BigNumber => {
+  if (amountIn.eq(Zero)) {
+    throw new Error(`getAmountOut: Insufficient amountIn`);
+  }
+  if (reserveIn.eq(Zero) || reserveOut.eq(Zero)) {
+    throw new Error(`getAmountOut: Insufficient reserves`);
+  }
+  const amountInWithFee = amountIn.mul(997);
+  const numerator = amountInWithFee.mul(reserveOut);
+  const denominator = reserveIn.mul(1000).add(amountInWithFee);
+  const amountOut = (numerator.mul(100).div(denominator)).div(100);
+  return amountOut;
+};
+
 export const getContract = async (
   name: string,
   address?: string,
@@ -73,18 +93,18 @@ export const getContract = async (
 export const getTokenNames = async (
   wethAddress: string,
   pairs: string[],
-  ethers?: any,
+  provider: Provider,
 ): Promise<string[]> => {
   const tokenNames = [] as string[];
   for (let i = 0; i < pairs.length; i++) {
     const pairAddress = pairs[i];
-    const pair = await getContract("UniswapPair", pairAddress, ethers);
+    const pair = (await getContract("UniswapPair", pairAddress)).connect(provider);
     const token0 = await pair.token0();
     let token;
     if (token0 === wethAddress) {
-      token = await getContract("FakeToken", await pair.token1(), ethers);
+      token = (await getContract("FakeToken", await pair.token1())).connect(provider);
     } else {
-      token = await getContract("FakeToken", token0, ethers);
+      token = (await getContract("FakeToken", token0)).connect(provider);
     }
     tokenNames.push(await token.name());
   }
@@ -96,13 +116,12 @@ export const getTokenSafeMinimums = async (
   ethInvestment: string,
   pairs: string[],
   allocations: string[],
-  ethers: any,
+  provider: Provider,
 ): Promise<string[]> => {
   const tokenMinimums = [] as string[];
-  const router = await getContract("UniswapRouter", undefined, ethers);
   for (let i = 0; i < pairs.length; i++) {
     const pairAddress = pairs[i];
-    const pair = await getContract("UniswapPair", pairAddress, ethers);
+    const pair = (await getContract("UniswapPair", pairAddress)).connect(provider);
     const token0 = await pair.token0();
     let wethReserves;
     let tokenReserves;
@@ -111,7 +130,7 @@ export const getTokenSafeMinimums = async (
     } else {
       [tokenReserves, wethReserves] = await pair.getReserves();
     }
-    const amountOut = await router.getAmountOut(
+    const amountOut = await getAmountOut(
       getIntermediateSwapAmount(
         parseEther(ethInvestment).mul(allocations[i]).div(100),
         wethReserves,

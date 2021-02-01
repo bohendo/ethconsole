@@ -94,7 +94,7 @@ describe("Initialize Liquidity", function() {
       investAmount,
       pairs,
       allocations,
-      ethers,
+      ethers.provider,
     );
     // Second, change the chain state to make swaps unsafe
     const pair0 = await (ethers as any).getContractAt("UniswapPair", pairs[0]);

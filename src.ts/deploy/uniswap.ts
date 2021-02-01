@@ -5,7 +5,6 @@ import { deployments, ethers, getNamedAccounts, getChainId, network, run } from 
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { env, logger } from "../constants";
-import { getContract } from "../utils";
 
 const func: DeployFunction = async () => {
   const log = logger.child({ module: "Deploy" });
@@ -74,11 +73,11 @@ const func: DeployFunction = async () => {
       await migrate(name, args);
     }
 
-    const Weth = await getContract("WETH", undefined, ethers);
-    const wethBal = await Weth.balanceOf(deployer);
+    const weth = await (ethers as any).getContract("WETH");
+    const wethBal = await weth.balanceOf(deployer);
     if (wethBal.eq(Zero)) {
-      await (await Weth.deposit({ value: parseEther("100000") })).wait();
-      log.info(`Deposited a bunch of ETH to generate ${await Weth.balanceOf(deployer)} WETH`);
+      await (await weth.deposit({ value: parseEther("100000") })).wait();
+      log.info(`Deposited a bunch of ETH to generate ${await weth.balanceOf(deployer)} WETH`);
     } else {
       log.info(`The deployer already has a balance of ${wethBal} WETH`);
     }
@@ -91,11 +90,11 @@ const func: DeployFunction = async () => {
       ["FakeWBTC", "0.041"],
       ["FakeYFI", "0.045"],
     ]) {
-      const token = await getContract(name, undefined, ethers);
+      const token = await (ethers as any).getContract(name);
       log.info(`Creating uniswap pair for ${name}`);
       await run("create-uni-pair", {
         signerAddress: deployer,
-        tokenA: Weth.address,
+        tokenA: weth.address,
         tokenB: token.address,
         amountA: "10000",
         amountB: formatEther(parseEther(price).mul(10000)),
