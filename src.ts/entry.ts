@@ -1,30 +1,32 @@
+import { Contract } from "@ethersproject/contracts";
 import * as eth from "ethers";
 
-import { ledger, getLedgerSigner } from "./ledger";
 import { env, provider, wallets } from "./constants";
-import { eth2, tokens, uniswap } from "./lib";
-import { log, sqrt, toHumanReadable } from "./utils";
+import { deployments } from "./deployments";
 import { initLiq } from "./initLiq";
+import { ledger, getLedgerSigner } from "./ledger";
+import { log, sqrt, toHumanReadable } from "./utils";
 
-console.log(`Connected to provider ${env.ethProviderUrl.split("/").splice(0, 3).join("/")}`);
+let network;
+if (env.ethProviderUrl.includes("localhost")) {
+  network = "localhost";
+} else if (env.ethProviderUrl.includes("mainnet")) {
+  network = "mainnet";
+} else {
+  network = "mainnet";
+}
+console.log(`Connected to ${network} provider ${env.ethProviderUrl.split("/").splice(0, 3).join("/")}`);
 
 // Attach exported utils to global for easy access in the console
 const setGlobal = (key: string, value: any): void => {
   (global as any)[key] = value;
 };
 
-setGlobal("eth2", eth2);
-setGlobal("uniswap", uniswap);
-
-setGlobal("AAVE", tokens.AAVE);
-setGlobal("COMP", tokens.COMP);
-setGlobal("DAI", tokens.DAI);
-setGlobal("MKR", tokens.MKR);
-setGlobal("UNI", tokens.UNI);
-setGlobal("USDC", tokens.USDC);
-setGlobal("WBTC", tokens.WBTC);
-setGlobal("WETH", tokens.WETH);
-setGlobal("YFI", tokens.YFI);
+for (const key of Object.keys(deployments[network])) {
+  console.log(`Loading ${key} contract`);
+  const deployment = deployments[network][key];
+  setGlobal(key, new Contract(deployment.address, deployment.abi, provider));
+}
 
 setGlobal("BN", eth.BigNumber.from);
 setGlobal("eth", eth);
