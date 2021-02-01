@@ -17,7 +17,7 @@ export const initLiq = async (
   minTokens: string[] = [],
 ): Promise<any> => {
   const log = logger.child({ module: "InitLiquidity" });
-  const provider = signer.provider!;
+  const provider = signer.provider;
   if (!provider) {
     throw new Error(`Fatal: signer must be connect to a provider`);
   }

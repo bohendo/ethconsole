@@ -2,8 +2,8 @@ import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
 
-// USDC implementation is currently at 0xb7277a6e95992041568d9391d09d0122023778a2
-export const usdc = new Contract(
+// Implementation is currently at 0xb7277a6e95992041568d9391d09d0122023778a2
+export const USDC = new Contract(
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   [
     // From the proxy at above address
