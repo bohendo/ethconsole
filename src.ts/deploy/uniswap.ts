@@ -71,6 +71,7 @@ const func: DeployFunction = async () => {
     const weth = await (ethers as any).getContract("WETH");
     const factory = await (ethers as any).getContract("UniswapFactory", deployer);
     const router = await (ethers as any).getContract("UniswapRouter", deployer);
+    const pairArtifact = await deployments.getArtifact("UniswapPair");
 
     for (const [name, price] of [
       ["FakeAAVE", "4.5"],
@@ -92,9 +93,18 @@ const func: DeployFunction = async () => {
       if (pairAddress === AddressZero) {
         log.info(`Using the factory at ${factory.address} to create a pair for WETH & ${token.address}`);
         tx = await factory.createPair(weth.address, token.address);
-        await tx.wait();
+        const receipt = await tx.wait();
         pairAddress = await factory.getPair(weth.address, token.address);
         log.info(`Successfully created pair at ${pairAddress} via tx ${tx.hash}`);
+        await deployments.save(`UniswapPair_ETH_${name.replace("Fake", "")}`, {
+          abi: pairArtifact.abi,
+          address: pairAddress,
+          receipt,
+          transactionHash: tx.hash,
+          args: [weth.address, token.address],
+          bytecode: pairAddress.bytecode,
+          deployedBytecode: pairAddress.deployedBytecode,
+        });
       } else {
         log.info(`A pair has already been created at ${pairAddress} for ${weth.address} & ${token.address}`);
       }
