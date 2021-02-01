@@ -4,7 +4,7 @@ import { ledger, getLedgerSigner } from "./ledger";
 import { provider, wallets } from "./constants";
 import { log, sqrt, toHumanReadable } from "./utils";
 
-import { eth2, maker, tokens, tornado, uniswap, yearn } from "./lib";
+import { eth2, liqManager, maker, tokens, tornado, uniswap, yearn } from "./lib";
 
 // Attach exported utils to global for easy access in the console
 const setGlobal = (key: string, value: any): void => {
@@ -12,6 +12,7 @@ const setGlobal = (key: string, value: any): void => {
 };
 
 setGlobal("eth2", eth2);
+setGlobal("liqManager", liqManager);
 setGlobal("maker", maker);
 setGlobal("tornado", tornado);
 setGlobal("uniswap", uniswap);
