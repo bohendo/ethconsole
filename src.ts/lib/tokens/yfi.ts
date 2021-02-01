@@ -2,6 +2,12 @@ import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getYFI = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].YFI;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 export const YFI = new Contract(
   "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e",

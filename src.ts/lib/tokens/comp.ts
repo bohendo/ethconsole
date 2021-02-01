@@ -2,6 +2,12 @@ import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getCOMP = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].COMP;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 export const COMP = new Contract(
   "0xc00e94Cb662C3520282E6f5717214004A7f26888",

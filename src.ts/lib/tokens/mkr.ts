@@ -2,6 +2,12 @@ import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getMKR = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].MKR;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 export const MKR = new Contract(
   "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2",

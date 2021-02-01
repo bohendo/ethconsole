@@ -1,11 +1,18 @@
+import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getUSDC = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].USDC;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 // Implementation is currently at 0xb7277a6e95992041568d9391d09d0122023778a2
 export const USDC = new Contract(
   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-  [
+  new Interface([
     // From the proxy at above address
     "function upgradeTo(address newImplementation)",
     "function upgradeToAndCall(address newImplementation, bytes data) payable",
@@ -85,6 +92,6 @@ export const USDC = new Contract(
     "function updateMasterMinter(address _newMasterMinter)",
     "function updatePauser(address _newPauser)",
     "function updateRescuer(address newRescuer)",
-  ],
+  ]),
   provider,
 );

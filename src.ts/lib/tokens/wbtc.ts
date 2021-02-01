@@ -2,6 +2,12 @@ import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getWBTC = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].WBTC;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 export const WBTC = new Contract(
   "0x2260fac5e5542a773aa44fbcfedf7c193bc2c599",

@@ -2,6 +2,12 @@ import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getWETH = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].WETH;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 export const WETH = new Contract(
   "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",

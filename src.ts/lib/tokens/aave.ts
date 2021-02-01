@@ -2,6 +2,12 @@ import { Interface } from "@ethersproject/abi";
 import { Contract } from "@ethersproject/contracts";
 
 import { provider } from "../../constants";
+import { deployments } from "../../deployments";
+
+export const getAAVE = (network: "mainnet" | "localhost"): Contract => {
+  const deployment = deployments[network].AAVE;
+  return new Contract(deployment.address, deployment.abi, provider);
+};
 
 // Implementation is currently at 0xC13eac3B4F9EED480045113B7af00F7B5655Ece8
 export const AAVE = new Contract(
