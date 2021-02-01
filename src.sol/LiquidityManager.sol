@@ -77,6 +77,7 @@ contract LiquidityManager {
         uint c = wethReserve.mul(3988000).mul(s);
         uint a = wethReserve.mul(wethReserve).mul(3988009);
         amt = ((Math.sqrt(a.add(c))).sub(b)).div(1994);
+        require(amt > 0, "FancyMath: RETURNED_ZERO :(");
     }
 
 }

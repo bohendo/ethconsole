@@ -17,7 +17,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     const { amount, pairs, allocations, logLevel, signerAddress, minTokens } = args;
     const log = pino({ level: logLevel || "info" });
 
-    const weth = await (hre.ethers as any).getContract("WETH");
+    const wethAddress = (await (hre.ethers as any).getContract("WETH")).address;
 
     ////////////////////////////////////////
     // Check to ensure valid input was provided
@@ -49,7 +49,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     ////////////////////////////////////////
     // Determine the minimum tokens to receive from intermediate swaps
 
-    const tokenNames = await getTokenNames(weth.address, pairs, hre.ethers.provider);
+    const tokenNames = await getTokenNames(wethAddress, pairs, hre.ethers.provider);
     let tokenMinimums: string[];
     log.info(`Provided min tokens: ${minTokens}`);
     if (minTokens.length === 4) {
@@ -58,7 +58,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     } else {
       log.info(`Determining the minimum amount of tokens we should receive form chain state..`);
       tokenMinimums = await getTokenSafeMinimums(
-        weth.address,
+        wethAddress,
         amount,
         pairs,
         allocations,
@@ -79,7 +79,7 @@ export default task("init-liquidity", "Initialize an investment into liquidity f
     const deployment = await hre.deployments.deploy("LiquidityManager", {
       from: signerAddress,
       args: [
-        weth.address,
+        wethAddress,
         pairs,
         allocations,
         tokenMinimums,
