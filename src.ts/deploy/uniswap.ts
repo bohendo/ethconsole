@@ -1,13 +1,14 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero, EtherSymbol, Zero } from "@ethersproject/constants";
+import { keccak256 } from "@ethersproject/keccak256";
 import { formatEther, parseEther } from "@ethersproject/units";
-import { deployments, ethers, getNamedAccounts, getChainId, network, run } from "hardhat";
+import { deployments, ethers, getNamedAccounts, getChainId, network } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 
-import { env, logger } from "../constants";
+import { logger } from "../constants";
 
 const func: DeployFunction = async () => {
-  const log = logger.child({ module: "Deploy" });
+  const log = logger.child({ module: "DeployTokens" });
   const chainId = await getChainId();
   const provider = ethers.provider;
   const { deployer } = await getNamedAccounts();
@@ -58,15 +59,8 @@ const func: DeployFunction = async () => {
   if (network.name === "hardhat" || network.name === "localhost") {
     log.info(`Running localnet migration`);
     for (const row of [
-      ["WETH", []],
       ["UniswapFactory", [AddressZero]],
       ["UniswapRouter", ["UniswapFactory", "WETH"]],
-      ["FakeAAVE", []],
-      ["FakeCOMP", []],
-      ["FakeMKR", []],
-      ["FakeUNI", []],
-      ["FakeWBTC", []],
-      ["FakeYFI", []],
     ]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;
@@ -74,13 +68,8 @@ const func: DeployFunction = async () => {
     }
 
     const weth = await (ethers as any).getContract("WETH");
-    const wethBal = await weth.balanceOf(deployer);
-    if (wethBal.eq(Zero)) {
-      await (await weth.deposit({ value: parseEther("100000") })).wait();
-      log.info(`Deposited a bunch of ETH to generate ${await weth.balanceOf(deployer)} WETH`);
-    } else {
-      log.info(`The deployer already has a balance of ${wethBal} WETH`);
-    }
+    const factory = await (ethers as any).getContract("UniswapFactory", deployer);
+    const router = await (ethers as any).getContract("UniswapRouter", deployer);
 
     for (const [name, price] of [
       ["FakeAAVE", "4.5"],
@@ -92,14 +81,51 @@ const func: DeployFunction = async () => {
     ]) {
       const token = await (ethers as any).getContract(name);
       log.info(`Creating uniswap pair for ${name}`);
-      await run("create-uni-pair", {
-        signerAddress: deployer,
-        tokenA: weth.address,
-        tokenB: token.address,
-        amountA: "10000",
-        amountB: formatEther(parseEther(price).mul(10000)),
-        logLevel: env.logLevel,
-      });
+
+      const amountA = "10000";
+      const amountB = formatEther(parseEther(price).mul(10000));
+
+      let pairAddress = await factory.getPair(weth.address, token.address);
+      let tx;
+
+      if (pairAddress === AddressZero) {
+        log.info(`Using the factory at ${factory.address} to create a pair for WETH & ${token.address}`);
+        tx = await factory.createPair(weth.address, token.address);
+        await tx.wait();
+        pairAddress = await factory.getPair(weth.address, token.address);
+        log.info(`Successfully created pair at ${pairAddress} via tx ${tx.hash}`);
+      } else {
+        log.info(`A pair has already been created at ${pairAddress} for ${weth.address} & ${token.address}`);
+      }
+
+      log.info(`Pair init code hash: ${keccak256(await factory.pairCreationCode())}`);
+
+      const pair = await (ethers as any).getContractAt("UniswapPair", pairAddress);
+      const reserves = await pair.getReserves();
+      if (reserves[0].eq(Zero)) {
+        const TokenA = await (ethers as any).getContractAt("FakeToken", weth.address, deployer);
+        await (await TokenA.approve(router.address, parseEther(amountA))).wait();
+        log.debug(`Successfully approved ${router.address} to spend ${parseEther(amountA)} ${weth.address}`);
+        const TokenB = await (ethers as any).getContractAt("FakeToken", token.address, deployer);
+        await (await TokenB.approve(router.address, parseEther(amountB))).wait();
+        log.debug(`Successfully approved ${router.address} to spend ${parseEther(amountB)} ${token.address}`);
+        tx = await router.addLiquidity(
+          weth.address,
+          token.address,
+          parseEther(amountA),
+          parseEther(amountB),
+          parseEther(amountA),
+          parseEther(amountB),
+          deployer,
+          Date.now() + 180 * 1000,
+        );
+        log.info(`Successfully added liquidity of ${amountA} ${weth.address} and ${amountB} ${token.address}`);
+      } else {
+        log.info(`Pair ${pairAddress} has reserves of ${
+          formatEther(reserves[0])
+        } and ${formatEther(reserves[1])}`);
+      }
+
     }
 
   // Don't run these migrations on mainnet or public testnets
@@ -115,3 +141,5 @@ const func: DeployFunction = async () => {
   log.info(`Sent ${nTx} transaction${nTx === 1 ? "" : "s"} & spent ${EtherSymbol} ${spent}`);
 };
 export default func;
+module.exports.dependencies = ["Tokens"];
+module.exports.tags = ["Uniswap"];
