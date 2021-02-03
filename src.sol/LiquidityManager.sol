@@ -27,11 +27,11 @@ contract LiquidityManager {
       address pair
     )
         public
+        view
         returns (uint ethBal)
     {
         (uint112 reserve0, uint112 reserve1,) = IUniswapPair(pair).getReserves();
         uint liqTokenSupply = IUniswapPair(pair).totalSupply();
-        uint liqTokens = IUniswapPair(pair).balanceOf(address(this));
         uint amount0 = liqTokenSupply.mul(reserve0) / liqTokenSupply;
         uint amount1 = liqTokenSupply.mul(reserve1) / liqTokenSupply;
         address token0 = IUniswapPair(pair).token0(); // store locally to save gas
@@ -44,6 +44,47 @@ contract LiquidityManager {
         }
     }
 
+    function liquidate (
+      address pair,
+      uint amount,
+      uint minEth
+    )
+        public
+    {
+        uint wethBefore = IERC20(WETH).balanceOf(address(this));
+        address token0 = IUniswapPair(pair).token0(); // store locally to save gas
+        uint ethBal = getBalance(pair);
+        require(ethBal >= amount, "LiquidityManager: INSUFFICIENT_LIQUIDITY");
+        uint liqTokensToBurn = ethBal.mul(
+            IUniswapPair(pair).balanceOf(address(this))
+        ).div(amount);
+        IUniswapPair(pair).transfer(pair, liqTokensToBurn);
+        IUniswapPair(pair).burn(address(this));
+        address tokenAddress;
+        uint tokenReserve;
+        uint wethReserve;
+        if (token0 == WETH) {
+            (wethReserve, tokenReserve,) = IUniswapPair(pair).getReserves();
+            tokenAddress = IUniswapPair(pair).token1();
+        } else {
+            (tokenReserve, wethReserve,) = IUniswapPair(pair).getReserves();
+            tokenAddress = token0;
+        }
+        uint tokenBal = IERC20(tokenAddress).balanceOf(address(this));
+        uint wethAmountOut = UniswapLibrary.getAmountOut(tokenBal, tokenReserve, wethReserve);
+        IERC20(tokenAddress).transfer(pair, tokenBal);
+        if (token0 == WETH) {
+          IUniswapPair(pair).swap(wethAmountOut, 0, address(this), new bytes(0));
+        } else {
+          IUniswapPair(pair).swap(0, wethAmountOut, address(this), new bytes(0));
+        }
+        uint wethAfter = IERC20(WETH).balanceOf(address(this));
+        require(
+          wethAfter.sub(wethBefore) >= minEth,
+          "LiquidityManager: INSUFFICIENT_ETH_RECEIVED"
+        );
+    }
+
     function allocate (
       address pair,
       uint amount,
@@ -52,6 +93,8 @@ contract LiquidityManager {
         public
         payable
     {
+        // TODO: deposit ETH into WETH if called externally
+
         address token0 = IUniswapPair(pair).token0(); // store locally to save gas
         address tokenAddress;
         uint n; // ETH value to be swapped for tokens
@@ -84,7 +127,7 @@ contract LiquidityManager {
         // add liquidity
         TransferHelper.safeTransfer(WETH, pair, amount-n);
         TransferHelper.safeTransfer(tokenAddress, pair, tokenAmountOut);
-        IUniswapPair(pair).mint(msg.sender);
+        IUniswapPair(pair).mint(address(this));
     }
 
     function deposit (
@@ -96,9 +139,7 @@ contract LiquidityManager {
         payable
     {
         IWETH(WETH).deposit{value: msg.value}();
-
         // TODO: assert than given arrays are all of the same length
-
         for (uint i; i < pairs.length; i++) {
             allocate(
               pairs[i],
@@ -106,7 +147,6 @@ contract LiquidityManager {
               minTokens[i]
             );
         }
-
         // Return any WETH dust that's leftover
         uint balance = IERC20(WETH).balanceOf(address(this));
         if (balance > 0) {
