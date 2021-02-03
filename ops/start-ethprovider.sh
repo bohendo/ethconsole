@@ -38,4 +38,13 @@ do
   else echo "Ethprovider failed to start up" && exit 1
   fi
 done
+
+while [[ ! -f ".flags/ethprovider_deployments" ]]
+do
+  if grep -qs "$name" <<<"$(docker container ls)"
+  then sleep 1
+  else echo "Ethprovider failed to start up" && exit 1
+  fi
+done
+
 echo "Good morning, ethprovider!"

@@ -35,7 +35,7 @@ default: ethprovider
 start: transpiled-ts
 	bash ops/start.sh
 
-start-ethprovider:
+start-ethprovider: ethprovider
 	bash ops/start-ethprovider.sh
 restart-ethprovider: stop-ethprovider
 	bash ops/start-ethprovider.sh

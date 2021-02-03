@@ -9,6 +9,7 @@
 **/tsconfig.tsbuildinfo
 *.docker-compose.yml
 docker-compose.yml
+.ethprovider_migrations_complete
 
 # Cache
 **/.node_repl_history
@@ -58,6 +59,3 @@ cypress/videos
 **/.env
 **/react-app-env.d.ts
 .secret
-
-# Local address book
-address-book.json
