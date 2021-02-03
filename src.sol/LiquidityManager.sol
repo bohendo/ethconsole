@@ -23,7 +23,7 @@ contract LiquidityManager {
         WETH = _WETH;
     }
 
-    function getBalance (
+    function getBalance(
       address pair
     )
         public
@@ -44,7 +44,66 @@ contract LiquidityManager {
         }
     }
 
-    function allocate (
+    function getBalances(
+      address[4] memory pairs
+    )
+        public
+        view
+        returns (uint ethBal)
+    {
+        ethBal = 0;
+        for (uint i; i < pairs.length; i++) {
+            uint pairEthBal = getBalance(pairs[i]);
+            ethBal = ethBal.add(pairEthBal);
+        }
+    }
+
+    function rebalance(
+        address[4] memory pairs,
+        uint[4] memory targetAllocations,
+        uint[4] memory safetyLimits
+    )
+        public
+    {
+        // TODO: assert than given arrays are all of the same length
+        address[4] memory toAllocatePairs;
+        uint[4] memory toAllocateAmounts;
+        uint[4] memory ethBalances;
+        uint[4] memory pairPercentWads;
+        // Get the current % allocation to each pair
+        uint totalEthBalance = getBalances(pairs);
+        for (uint i; i < pairs.length; i++) {
+            ethBalances[i] = getBalance(pairs[i]);
+            pairPercentWads[i] = (ethBalances[i].mul(1e18)).div(totalEthBalance);
+        }
+        // Liquidate any pairs that contain more eth than the target allocations
+        for (uint i; i < pairs.length; i++) {
+            // mul percentage int by 1e18/100 to convert to percentWad
+            uint targetAllocationPercentWad = targetAllocations[i].mul(1e16);
+            if (pairPercentWads[i] < targetAllocationPercentWad) {
+              toAllocatePairs[i] = pairs[i];
+              toAllocateAmounts[i] = ethBalances[i].mul(
+                targetAllocationPercentWad - pairPercentWads[i]
+              ).div(1e18);
+            } else if (pairPercentWads[i] > targetAllocationPercentWad) {
+              toAllocatePairs[i] = address(0);
+              uint toLiq = ethBalances[i].mul(
+                pairPercentWads[i] - targetAllocationPercentWad
+              ).div(1e18);
+              liquidate(pairs[i], toLiq, safetyLimits[i]);
+            }
+        }
+        // Allocate to any pairs that contain less eth than the target allocations
+        for (uint i; i < toAllocatePairs.length; i++) {
+          if (toAllocatePairs[i] == address(0)) {
+            continue;
+          }
+          // TODO: what safetyLimit do we actually want to use here?
+          allocate(toAllocatePairs[i], toAllocateAmounts[i], safetyLimits[i]);
+        }
+    }
+
+    function allocate(
       address pair,
       uint amount,
       uint minToken
@@ -85,7 +144,7 @@ contract LiquidityManager {
         IUniswapPair(pair).mint(address(this));
     }
 
-    function liquidate (
+    function liquidate(
       address pair,
       uint amount,
       uint minEth
@@ -127,9 +186,10 @@ contract LiquidityManager {
           wethAfter.sub(wethBefore) >= minEth,
           "LiquidityManager: INSUFFICIENT_ETH_RECEIVED"
         );
+        // TODO: send weth to msg.sender if called externally
     }
 
-    function deposit (
+    function deposit(
         address[] memory pairs,
         uint[] memory allocationRatios,
         uint[] memory minTokens
@@ -153,7 +213,7 @@ contract LiquidityManager {
         }
     }
 
-    function withdraw (
+    function withdraw(
         address[] memory pairs,
         uint[] memory liquidationAmounts,
         uint[] memory minEth
