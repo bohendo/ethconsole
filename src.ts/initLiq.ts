@@ -71,7 +71,7 @@ export const initLiq = async (
     } (via >=${formatEther(tokenMinimums[i])} ${tokenNames[i]})`);
   }
 
-  const factory = ContractFactory.fromSolidity(artifacts["LiquidityManager"]).connect(signer);
+  const factory = ContractFactory.fromSolidity(artifacts["InitLiquidity"]).connect(signer);
   const deployment = await factory.deploy(
     wethAddress,
     pairs,

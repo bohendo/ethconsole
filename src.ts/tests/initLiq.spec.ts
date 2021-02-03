@@ -9,7 +9,7 @@ import { initLiq } from "../initLiq";
 
 import { expect } from "./utils";
 
-describe("Initialize Liquidity", function() {
+describe("Init Liquidity", function() {
   const log = logger.child({ module: "TestInitLiq" });
   const signerAddress = bob.address;
   const investAmount = "1.5";

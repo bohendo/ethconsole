@@ -12,7 +12,7 @@ import "./lib/TransferHelper.sol";
 
 import "./uniswap/library.sol";
 
-contract LiquidityManager {
+contract InitLiquidity {
     using SafeMath for uint;
 
     constructor(
