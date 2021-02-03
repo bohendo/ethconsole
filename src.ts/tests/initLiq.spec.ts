@@ -54,16 +54,16 @@ describe("Init Liquidity", function() {
   };
 
   it("should run without error", async () => {
-    const liqManagerAddress = await initLiqTask();
-    log.info(`Got liqManagerAddress = ${liqManagerAddress}`);
-    expect(liqManagerAddress).not.equals(AddressZero);
+    const initLiqAddress = await initLiqTask();
+    log.info(`Got initLiqAddress = ${initLiqAddress}`);
+    expect(initLiqAddress).not.equals(AddressZero);
   });
 
   it("should have zero balance leftover for all tokens", async () => {
-    const liqManagerAddress = await initLiqTask();
+    const initLiqAddress = await initLiqTask();
     for (const name of [ ...Object.keys(investPortfolio), "WETH"]) {
       const token = await (ethers as any).getContract(name, signerAddress);
-      const tokenBalance = await token.balanceOf(liqManagerAddress);
+      const tokenBalance = await token.balanceOf(initLiqAddress);
       log.info(`Balance ${name}: ${tokenBalance.toString()}`);
       expect(tokenBalance.eq(Zero)).to.be.true;
     };
@@ -186,9 +186,9 @@ describe("Init Liquidity", function() {
   });
 
   it("should not deploy any code to the contract address", async () => {
-    const liqManagerAddress = await initLiqTask();
-    const code = await ethers.provider.getCode(liqManagerAddress);
-    log.info(`Got liqManagerAddress with ${code.length/2-1} bytes of code: ${code}`);
+    const initLiqAddress = await initLiqTask();
+    const code = await ethers.provider.getCode(initLiqAddress);
+    log.info(`Got initLiqAddress with ${code.length/2-1} bytes of code: ${code}`);
     expect(code.replace(/^0x/, "")).to.equal("");
   });
 
