@@ -1,3 +1,7 @@
+
+# Private deployments
+deployments/localhost
+
 # Build Output
 **/*.0x
 **/.flags
@@ -9,7 +13,6 @@
 **/tsconfig.tsbuildinfo
 *.docker-compose.yml
 docker-compose.yml
-.ethprovider_migrations_complete
 
 # Cache
 **/.node_repl_history
@@ -27,11 +30,6 @@ docker-compose.yml
 **/.rpt2_cache
 **/.test-store
 **/cache/**
-
-# Data Storage
-**/.bot-store/
-**/.chaindata
-**/.db-snapshots
 
 # IDEs and editors
 **/*.launch
