@@ -43,6 +43,7 @@ const mainnetDeployment = {
 };
 deployments.mainnet = mainnetDeployment;
 deployments["1"] = mainnetDeployment;
+deployments[1] = mainnetDeployment;
 
 ////////////////////////////////////////
 // 1337 - localhost
@@ -80,3 +81,4 @@ const localhostDeployment = {
 };
 deployments.localhost = localhostDeployment;
 deployments["1337"] = localhostDeployment;
+deployments[1337] = localhostDeployment;

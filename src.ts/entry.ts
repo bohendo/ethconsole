@@ -37,18 +37,14 @@ for (const util of Object.keys(eth.utils)) {
 ////////////////////////////////////////
 /// Add deployed contract instances to the global scope
 
-let network;
-if (env.ethProviderUrl.includes("localhost")) {
-  network = "localhost";
-} else if (env.ethProviderUrl.includes("mainnet")) {
-  network = "mainnet";
-} else {
-  network = "mainnet";
-}
-console.log(`Connected to ${network} provider ${env.ethProviderUrl.split("/").splice(0, 3).join("/")}`);
-
-for (const key of Object.keys(deployments[network])) {
-  console.log(`Loading ${key} contract`);
-  const deployment = deployments[network][key];
-  setGlobal(key, new Contract(deployment.address, deployment.abi, provider));
-}
+provider.getNetwork().then(network => {
+  console.log(`Successfully connected to chain ${network.chainId} via provider ${
+    env.ethProviderUrl.split("/").splice(0, 3).join("/")
+  }`);
+  for (const key of Object.keys(deployments[network.chainId])) {
+    console.log(`Loading ${key} contract`);
+    const deployment = deployments[network.chainId][key];
+    setGlobal(key, new Contract(deployment.address, deployment.abi, provider));
+  }
+  process.stdout.write(`> `);
+});
