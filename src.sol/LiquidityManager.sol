@@ -65,7 +65,7 @@ contract LiquidityManager {
     )
         public
     {
-        // TODO: assert than given arrays are all of the same length
+        // TODO: assert than given arrays are all of the same length?
         address[4] memory toAllocatePairs;
         uint[4] memory toAllocateAmounts;
         uint[4] memory ethBalances;
@@ -111,6 +111,7 @@ contract LiquidityManager {
         public
         payable
     {
+        require(amount > 0, "LiquidityManager: ZERO_ALLOCATION");
         // TODO: deposit ETH into WETH if called externally
         address token0 = IUniswapPair(pair).token0(); // store locally to save gas
         address tokenAddress;
@@ -190,9 +191,9 @@ contract LiquidityManager {
     }
 
     function deposit(
-        address[] memory pairs,
-        uint[] memory allocationRatios,
-        uint[] memory minTokens
+        address[4] memory pairs,
+        uint[4] memory allocationRatios,
+        uint[4] memory minTokens
     )
         public
         payable
@@ -214,9 +215,9 @@ contract LiquidityManager {
     }
 
     function withdraw(
-        address[] memory pairs,
-        uint[] memory liquidationAmounts,
-        uint[] memory minEth
+        address[4] memory pairs,
+        uint[4] memory liquidationAmounts,
+        uint[4] memory minEth
     )
         public
         payable
@@ -245,7 +246,7 @@ contract LiquidityManager {
         uint c = wethReserve.mul(3988000).mul(s);
         uint a = wethReserve.mul(wethReserve).mul(3988009);
         amt = ((Math.sqrt(a.add(c))).sub(b)).div(1994);
-        require(amt > 0, "FancyMath: RETURNED_ZERO :(");
+        require(amt > 0, "LiquidityManager: FANCY_MATH_RETURNED_ZERO");
     }
 
 }
