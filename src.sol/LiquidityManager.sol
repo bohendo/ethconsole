@@ -30,18 +30,20 @@ contract LiquidityManager {
         view
         returns (uint ethBal)
     {
-        (uint112 reserve0, uint112 reserve1,) = IUniswapPair(pair).getReserves();
         uint liqTokenSupply = IUniswapPair(pair).totalSupply();
-        uint amount0 = liqTokenSupply.mul(reserve0) / liqTokenSupply;
-        uint amount1 = liqTokenSupply.mul(reserve1) / liqTokenSupply;
+        uint liqTokenBal = IUniswapPair(pair).balanceOf(address(this));
         address token0 = IUniswapPair(pair).token0(); // store locally to save gas
+        uint wethReserve;
+        uint tokenReserve;
         if (token0 == WETH) {
-            uint swappedEth = UniswapLibrary.getAmountOut(amount1, reserve1, reserve0);
-            ethBal = swappedEth + uint(amount0);
+            (wethReserve, tokenReserve,) = IUniswapPair(pair).getReserves();
         } else {
-            uint swappedEth = UniswapLibrary.getAmountOut(amount0, reserve0, reserve1);
-            ethBal = swappedEth + amount1;
+            (tokenReserve, wethReserve,) = IUniswapPair(pair).getReserves();
         }
+        uint wethBal = liqTokenBal.mul(wethReserve).div(liqTokenSupply);
+        uint tokenBal = liqTokenBal.mul(tokenReserve).div(liqTokenSupply);
+        uint swappedEth = UniswapLibrary.getAmountOut(tokenBal, tokenReserve, wethReserve);
+        ethBal = swappedEth + uint(wethBal);
     }
 
     function getBalances(
