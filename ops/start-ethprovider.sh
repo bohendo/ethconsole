@@ -21,6 +21,8 @@ image="${project}_ethprovider:latest"
 docker run \
   --detach \
   --env "FORKED_PROVIDER=${FORKED_PROVIDER:-}" \
+  --env "FORKED_BLOCK=${FORKED_BLOCK:-}" \
+  --env "CHAIN_ID=${CHAIN_ID:-1337}" \
   --mount "type=bind,source=$root,target=/root" \
   --name "$name" \
   --network "$project" \

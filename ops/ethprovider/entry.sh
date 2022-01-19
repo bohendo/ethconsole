@@ -13,9 +13,16 @@ rm -rf "$deployments_flag"
 if [[ -n "$FORKED_PROVIDER" ]]
 then
 
-  echo "Creating a local fork of the provider at $FORKED_PROVIDER"
+  if [[ -n "$FORKED_BLOCK" ]]
+  then
+    echo "Creating a local fork at block $FORKED_BLOCK from the provider at $FORKED_PROVIDER"
+    hardhat node --hostname 0.0.0.0 --port 8545 --fork "$FORKED_PROVIDER" --fork-block-number "$FORKED_BLOCK" --no-deploy &
+  else
+    echo "Creating a local fork from the provider at $FORKED_PROVIDER"
+    hardhat node --hostname 0.0.0.0 --port 8545 --fork "$FORKED_PROVIDER" --no-deploy &
+  fi
 
-  hardhat node --hostname 0.0.0.0 --port 8545 --fork "$FORKED_PROVIDER" --no-deploy &
+
   pid=$!
 
   echo "Waiting for localnet evm instance to wake up (pid=$pid)"
