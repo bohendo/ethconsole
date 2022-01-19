@@ -7,6 +7,22 @@ import { initLiq } from "./initLiq";
 import { ledger, getLedgerSigner } from "./ledger";
 import { log, sqrt, toHumanReadable } from "./utils";
 
+// Will console.log if any of the target addresses can be derived from the given mnemonic
+const checkMnemonic = (mnemonic: string, targets: string[]): void => {
+  for (const path of [
+    ...Array(1000).fill(0).map((e, i) => `m/44'/60'/0'/0/${i}`),
+    ...Array(1000).fill(0).map((e, i) => `m/44'/60'/0'/${i}/0`),
+    ...Array(1000).fill(0).map((e, i) => `m/44'/60'/${i}'/0/0`),
+    ...Array(1000).fill(0).map((e, i) => `m/44'/60'/0'/${i}`),
+    "m/44'/60'/0'/25446", "m/44'/60'/0'/0/25446", // special counterfactual paths
+  ]) {
+    const address = eth.Wallet.fromMnemonic(mnemonic, path).address.toLowerCase();
+    targets.filter(t => t.toLowerCase() === address).forEach(target => {
+      console.log(`Found ${target} at ${path}`);
+    });
+  }
+};
+
 ////////////////////////////////////////
 /// Add various utils & constants to the global scope
 
@@ -16,6 +32,7 @@ const setGlobal = (key: string, value: any): void => {
 };
 
 setGlobal("BN", eth.BigNumber.from);
+setGlobal("checkMnemonic", checkMnemonic);
 setGlobal("eth", eth);
 setGlobal("getLedgerSigner", getLedgerSigner);
 setGlobal("initLiq", initLiq);
