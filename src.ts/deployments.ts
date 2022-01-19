@@ -46,6 +46,27 @@ deployments["1"] = mainnetDeployment;
 deployments[1] = mainnetDeployment;
 
 ////////////////////////////////////////
+// 3 - Ropsten
+import * as CaptureTheEther from "../deployments/ropsten/CaptureTheEther.json";
+import * as NicknameChallenge from "../deployments/ropsten/NicknameChallenge.json";
+import * as GuessTheNumberChallenge from "../deployments/ropsten/GuessTheNumberChallenge.json";
+import * as GuessTheSecretNumberChallenge from "../deployments/ropsten/GuessTheSecretNumberChallenge.json";
+import * as GuessTheRandomNumberChallenge from "../deployments/ropsten/GuessTheRandomNumberChallenge.json";
+import * as GuessTheNewNumberChallenge from "../deployments/ropsten/GuessTheNewNumberChallenge.json";
+const ropstenDeployment = {
+  CaptureTheEther,
+  NicknameChallenge,
+  GuessTheNumberChallenge,
+  GuessTheSecretNumberChallenge,
+  GuessTheRandomNumberChallenge,
+  GuessTheNewNumberChallenge,
+};
+deployments.ropsten = ropstenDeployment;
+deployments["3"] = ropstenDeployment;
+deployments[3] = ropstenDeployment;
+
+/*
+////////////////////////////////////////
 // 1337 - localhost
 import * as localhostFakeAAVE from "../deployments/localhost/FakeAAVE.json";
 import * as localhostFakeCOMP from "../deployments/localhost/FakeCOMP.json";
@@ -82,3 +103,4 @@ const localhostDeployment = {
 deployments.localhost = localhostDeployment;
 deployments["1337"] = localhostDeployment;
 deployments[1337] = localhostDeployment;
+*/
