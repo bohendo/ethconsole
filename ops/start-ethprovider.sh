@@ -20,6 +20,7 @@ image="${project}_ethprovider:latest"
 # Mount repo into ethprovider:/root to trigger migration at startup
 docker run \
   --detach \
+  --env "FORKED_PROVIDER=${FORKED_PROVIDER:-}" \
   --mount "type=bind,source=$root,target=/root" \
   --name "$name" \
   --network "$project" \
@@ -27,6 +28,8 @@ docker run \
   --rm \
   --tmpfs "/tmp" \
   "$image"
+
+docker container logs "$name" &
 
 while !  curl -q -s -k -s -X POST \
   -H "Content-Type: application/json" \
@@ -43,8 +46,9 @@ while [[ ! -f ".flags/ethprovider_deployments" ]]
 do
   if grep -qs "$name" <<<"$(docker container ls)"
   then sleep 1
-  else echo "Ethprovider failed to start up" && exit 1
+  else echo "Ethprovider failed to initialize contract state" && exit 1
   fi
 done
 
+sleep 1
 echo "Good morning, ethprovider!"

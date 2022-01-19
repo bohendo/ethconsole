@@ -18,7 +18,7 @@ const config: HardhatUserConfig = {
     artifacts: "./artifacts",
     deploy: "./src.ts/deploy",
     deployments: "./deployments",
-    sources: "./src.sol",
+    sources: "./src.sol/capturetheether",
     tests: "./src.ts/tests",
   },
   solidity: {
@@ -46,7 +46,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       accounts: {
-        accountsBalance: "0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        accountsBalance: "1000000000000000000000000000",
         mnemonic,
       },
       chainId,
@@ -60,14 +60,19 @@ const config: HardhatUserConfig = {
       gasPrice: parseUnits("100", "gwei").toNumber(),
       url: urlOverride || "http://localhost:8545",
     },
-    goerli: {
-      accounts: { mnemonic },
-      chainId: 5,
-      url: urlOverride || "http://localhost:8545",
-    },
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
+      url: urlOverride || "http://localhost:8545",
+    },
+    ropsten: {
+      accounts: { mnemonic },
+      chainId: 3,
+      url: urlOverride || "http://localhost:8545",
+    },
+    goerli: {
+      accounts: { mnemonic },
+      chainId: 5,
       url: urlOverride || "http://localhost:8545",
     },
   },

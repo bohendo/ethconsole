@@ -37,7 +37,7 @@ start: transpiled-ts
 
 start-ethprovider: ethprovider
 	bash ops/start-ethprovider.sh
-restart-ethprovider: stop-ethprovider
+restart-ethprovider: stop-ethprovider ethprovider
 	bash ops/start-ethprovider.sh
 stop-ethprovider:
 	bash ops/stop.sh ethprovider

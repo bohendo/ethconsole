@@ -58,7 +58,7 @@ provider.getNetwork().then(network => {
   console.log(`Successfully connected to chain ${network.chainId} via provider ${
     env.ethProviderUrl.split("/").splice(0, 3).join("/")
   }`);
-  for (const key of Object.keys(deployments[network.chainId])) {
+  for (const key of Object.keys(deployments[network.chainId] || {})) {
     console.log(`Loading ${key} contract`);
     const deployment = deployments[network.chainId][key];
     setGlobal(key, new Contract(deployment.address, deployment.abi, provider));

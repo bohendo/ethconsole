@@ -3,18 +3,42 @@ set -e
 
 export ETHCONSOLE_HARDHAT=true
 
+echo "Starting ethprovider in env"
+env
+
 deployments_flag=".flags/ethprovider_deployments"
 mkdir -p "$(dirname "$deployments_flag")"
 rm -rf "$deployments_flag"
 
-hardhat node --hostname 0.0.0.0 --port 8545 --no-deploy &
-pid=$!
+if [[ -n "$FORKED_PROVIDER" ]]
+then
 
-echo "Waiting for localnet evm instance to wake up (pid=$pid)"
-wait-for -q -t 30 localhost:8545 2>&1 | sed '/nc: bad address/d'
+  echo "Creating a local fork of the provider at $FORKED_PROVIDER"
 
-hardhat --network localhost deploy --write true | pino-pretty --colorize --ignore module,pid,hostname
+  hardhat node --hostname 0.0.0.0 --port 8545 --fork "$FORKED_PROVIDER" --no-deploy &
+  pid=$!
 
-touch "$deployments_flag"
+  echo "Waiting for localnet evm instance to wake up (pid=$pid)"
+  wait-for -q -t 30 localhost:8545 2>&1 | sed '/nc: bad address/d'
 
-wait $pid
+  touch "$deployments_flag"
+  wait $pid
+
+else
+
+  echo "Creating a new local node & deploying contracts to it.."
+
+  hardhat node --hostname 0.0.0.0 --port 8545 --no-deploy &
+  pid=$!
+
+  echo "Waiting for localnet evm instance to wake up (pid=$pid)"
+  wait-for -q -t 30 localhost:8545 2>&1 | sed '/nc: bad address/d'
+
+  hardhat --network localhost deploy --write true |\
+    pino-pretty --colorize --ignore module,pid,hostname
+
+  touch "$deployments_flag"
+
+  wait $pid
+
+fi

@@ -1,7 +1,7 @@
 import { Signer } from "@ethersproject/abstract-signer";
 import { BigNumber } from "@ethersproject/bignumber";
 import { ContractFactory } from "@ethersproject/contracts";
-import { EtherSymbol, Zero } from "@ethersproject/constants";
+import { EtherSymbol, One, Zero } from "@ethersproject/constants";
 import { formatEther, parseEther } from "@ethersproject/units";
 
 import { artifacts } from "./artifacts";
@@ -81,7 +81,7 @@ export const initLiq = async (
   );
   const receipt = await provider.getTransactionReceipt(deployment.deployTransaction.hash);
   log.info(`Success! consumed ${receipt.gasUsed} gas worth ${
-    formatEther(receipt.gasUsed.mul(deployment.deployTransaction.gasPrice))
+    formatEther(receipt.gasUsed.mul(deployment.deployTransaction.gasPrice || One))
   } ${EtherSymbol} initializing liquidity`);
   return deployment;
 };
