@@ -55,4 +55,3 @@ export const tokenSale = async (signer = wallets[0]): Promise<void> => {
   log(`Challenge complete = ${await challenge.isComplete()}`);
 
 };
-
