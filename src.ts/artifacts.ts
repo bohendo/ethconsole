@@ -2,6 +2,7 @@ import { FunctionFragment, EventFragment, ParamType } from "@ethersproject/abi";
 
 import * as GuessTheNewNumberSolver from "../artifacts/src.sol/capturetheether/GuessTheNewNumberSolver.sol/GuessTheNewNumberSolver.json";
 import * as PredictTheFutureSolver from "../artifacts/src.sol/capturetheether/PredictTheFutureSolver.sol/PredictTheFutureSolver.json";
+import * as TokenSaleSolver from "../artifacts/src.sol/capturetheether/TokenSaleSolver.sol/TokenSaleSolver.json";
 import * as DepositContract from "../artifacts/src.sol/eth2/Deposit.sol/DepositContract.json";
 import * as FakeAAVE from "../artifacts/src.sol/testing/FakeAAVE.sol/FakeAAVE.json";
 import * as FakeCOMP from "../artifacts/src.sol/testing/FakeCOMP.sol/FakeCOMP.json";
@@ -32,6 +33,7 @@ type Artifacts = { [contractName: string]: Artifact };
 export const artifacts: Artifacts = {
   GuessTheNewNumberSolver,
   PredictTheFutureSolver,
+  TokenSaleSolver,
   DepositContract,
   FakeAAVE,
   FakeCOMP,
@@ -51,6 +53,7 @@ export const artifacts: Artifacts = {
 export {
   GuessTheNewNumberSolver,
   PredictTheFutureSolver,
+  TokenSaleSolver,
   DepositContract,
   FakeAAVE,
   FakeCOMP,
