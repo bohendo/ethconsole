@@ -58,6 +58,7 @@ import * as PredictTheFutureSolver from "../deployments/ropsten/PredictTheFuture
 import * as TokenSaleChallenge from "../deployments/ropsten/TokenSaleChallenge.json";
 import * as TokenWhaleChallenge from "../deployments/ropsten/TokenWhaleChallenge.json";
 import * as RetirementFundChallenge from "../deployments/ropsten/RetirementFundChallenge.json";
+import * as MappingChallenge from "../deployments/ropsten/MappingChallenge.json";
 const ropstenDeployment = {
   CaptureTheEther,
   NicknameChallenge,
@@ -70,6 +71,7 @@ const ropstenDeployment = {
   TokenSaleChallenge,
   TokenWhaleChallenge,
   RetirementFundChallenge,
+  MappingChallenge,
 };
 deployments.ropsten = ropstenDeployment;
 deployments["3"] = ropstenDeployment;

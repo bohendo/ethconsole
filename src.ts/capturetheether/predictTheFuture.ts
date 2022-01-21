@@ -27,9 +27,9 @@ export const predictTheFuture = async (signer = wallets[0]): Promise<void> => {
     artifacts.PredictTheFutureSolver.bytecode,
     signer,
   );
-
   const oneEth = parseEther("1");
   const solver = await factory.deploy(challenge.address, 7, { value: oneEth });
+  await solver.deployTransaction.wait();
 
   log(`Deployed a solver to address ${solver.address}`);
   log(`Solver balance = ${formatEther(await provider.getBalance(solver.address))}`);
