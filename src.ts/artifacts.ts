@@ -1,6 +1,7 @@
 import { FunctionFragment, EventFragment, ParamType } from "@ethersproject/abi";
 
 import * as MappingChallenge from "../artifacts/src.sol/capturetheether/MappingChallenge.sol/MappingChallenge.json";
+import * as DonationSolver from "../artifacts/src.sol/capturetheether/DonationSolver.sol/DonationSolver.json";
 import * as MappingSolver from "../artifacts/src.sol/capturetheether/MappingSolver.sol/MappingSolver.json";
 import * as GuessTheNewNumberSolver from "../artifacts/src.sol/capturetheether/GuessTheNewNumberSolver.sol/GuessTheNewNumberSolver.json";
 import * as PredictTheFutureSolver from "../artifacts/src.sol/capturetheether/PredictTheFutureSolver.sol/PredictTheFutureSolver.json";
@@ -37,6 +38,7 @@ type Artifacts = { [contractName: string]: Artifact };
 export const artifacts: Artifacts = {
   MappingChallenge,
   MappingSolver,
+  DonationSolver,
   GuessTheNewNumberSolver,
   PredictTheFutureSolver,
   TokenSaleSolver,
@@ -61,6 +63,7 @@ export const artifacts: Artifacts = {
 export {
   MappingChallenge,
   MappingSolver,
+  DonationSolver,
   GuessTheNewNumberSolver,
   PredictTheFutureSolver,
   TokenSaleSolver,

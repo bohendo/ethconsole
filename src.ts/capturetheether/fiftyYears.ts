@@ -6,22 +6,22 @@ import { provider, wallets } from "../constants";
 import { deployments } from "../deployments";
 import { log } from "../utils";
 
-export const mapping = async (player = wallets[0]): Promise<void> => {
+export const fiftyYears = async (player = wallets[0]): Promise<void> => {
   const playerAddress = await player.getAddress();
   log(`Player address = ${playerAddress}`);
   log(`Player balance = ${formatEther(await provider.getBalance(playerAddress))}`);
 
   const challenge = new Contract(
-    deployments.ropsten.MappingChallenge.address,
-    deployments.ropsten.MappingChallenge.abi,
+    deployments.ropsten.FiftyYearsChallenge.address,
+    deployments.ropsten.FiftyYearsChallenge.abi,
     provider,
   );
 
   log(`Preparing to solve challenge at ${challenge.address}`);
 
   const factory = new ContractFactory(
-    artifacts.MappingSolver.abi,
-    artifacts.MappingSolver.bytecode,
+    artifacts.FiftyYearsSolver.abi,
+    artifacts.FiftyYearsSolver.bytecode,
     player,
   );
 
@@ -32,3 +32,4 @@ export const mapping = async (player = wallets[0]): Promise<void> => {
   log(`Challenge complete = ${await challenge.isComplete()}`);
 
 };
+
