@@ -3,9 +3,11 @@ import { Provider } from "@ethersproject/abstract-provider";
 import { BigNumber } from "@ethersproject/bignumber";
 import { Contract } from "@ethersproject/contracts";
 import { Zero } from "@ethersproject/constants";
+import { JsonRpcProvider } from "@ethersproject/providers";
 import { formatEther, parseEther } from "@ethersproject/units";
 
 import { artifacts } from "./artifacts";
+import { provider } from "./constants";
 
 export const toHumanReadable = (abi: any) => (new Interface(abi)).format();
 
@@ -20,6 +22,12 @@ export const log = (msg: any) => {
       console.log(prefix + JSON.stringify(msg, undefined, 2));
     }
   }
+};
+
+export const traceStorage = (txHash: string): void => {
+  (provider as JsonRpcProvider).send("debug_traceTransaction", [txHash]).then(res => {
+    log(res.structLogs[res.structLogs.length-1].storage);
+  });
 };
 
 export const sqrt = (n: BigNumber): BigNumber => {

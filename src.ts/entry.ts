@@ -7,7 +7,7 @@ import { artifacts } from "./artifacts";
 import { deployments } from "./deployments";
 import { initLiq } from "./initLiq";
 import { ledger, getLedgerSigner } from "./ledger";
-import { log, sqrt, toHumanReadable } from "./utils";
+import { log, sqrt, toHumanReadable, traceStorage } from "./utils";
 
 // Will console.log if any of the target addresses can be derived from the given mnemonic
 const checkMnemonic = (mnemonic: string, targets: string[]): void => {
@@ -45,6 +45,7 @@ setGlobal("log", log);
 setGlobal("provider", provider);
 setGlobal("sqrt", sqrt);
 setGlobal("toHumanReadable", toHumanReadable);
+setGlobal("traceStorage", traceStorage);
 setGlobal("wallets", wallets);
 
 for (const constant of Object.keys(eth.constants)) {
