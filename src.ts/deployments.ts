@@ -49,6 +49,7 @@ deployments[1] = mainnetDeployment;
 // 3 - Ropsten
 import * as CaptureTheEther from "../deployments/ropsten/CaptureTheEther.json";
 import * as DonationChallenge from "../deployments/ropsten/DonationChallenge.json";
+import * as FuzzyIdentityChallenge from "../deployments/ropsten/FuzzyIdentityChallenge.json";
 import * as FiftyYearsChallenge from "../deployments/ropsten/FiftyYearsChallenge.json";
 import * as NicknameChallenge from "../deployments/ropsten/NicknameChallenge.json";
 import * as GuessTheNumberChallenge from "../deployments/ropsten/GuessTheNumberChallenge.json";
@@ -66,6 +67,7 @@ const ropstenDeployment = {
   NicknameChallenge,
   FiftyYearsChallenge,
   DonationChallenge,
+  FuzzyIdentityChallenge,
   GuessTheNumberChallenge,
   GuessTheSecretNumberChallenge,
   GuessTheRandomNumberChallenge,

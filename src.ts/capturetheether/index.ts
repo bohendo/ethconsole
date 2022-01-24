@@ -1,6 +1,7 @@
 export { donation } from "./donation";
-export { forceSend } from "./forceSend";
 export { fiftyYears } from "./fiftyYears";
+export { forceSend } from "./forceSend";
+export { fuzzyId } from "./fuzzyId";
 export { mapping } from "./mapping";
 export { predictTheFuture } from "./predictTheFuture";
 export { retirementFund } from "./retirementFund";

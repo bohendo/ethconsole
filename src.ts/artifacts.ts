@@ -2,6 +2,8 @@ import { FunctionFragment, EventFragment, ParamType } from "@ethersproject/abi";
 
 import * as MappingChallenge from "../artifacts/src.sol/capturetheether/MappingChallenge.sol/MappingChallenge.json";
 import * as DonationSolver from "../artifacts/src.sol/capturetheether/DonationSolver.sol/DonationSolver.json";
+import * as FuzzyIdentitySolver from "../artifacts/src.sol/capturetheether/FuzzyIdentitySolver.sol/FuzzyIdentitySolver.json";
+import * as FuzzyIdentitySolution from "../artifacts/src.sol/capturetheether/FuzzyIdentitySolver.sol/FuzzyIdentitySolution.json";
 import * as FiftyYearsSolver from "../artifacts/src.sol/capturetheether/FiftyYearsSolver.sol/FiftyYearsSolver.json";
 import * as MappingSolver from "../artifacts/src.sol/capturetheether/MappingSolver.sol/MappingSolver.json";
 import * as GuessTheNewNumberSolver from "../artifacts/src.sol/capturetheether/GuessTheNewNumberSolver.sol/GuessTheNewNumberSolver.json";
@@ -41,6 +43,8 @@ export const artifacts: Artifacts = {
   MappingChallenge,
   MappingSolver,
   DonationSolver,
+  FuzzyIdentitySolver,
+  FuzzyIdentitySolution,
   FiftyYearsSolver,
   GuessTheNewNumberSolver,
   PredictTheFutureSolver,
@@ -68,6 +72,8 @@ export {
   MappingChallenge,
   MappingSolver,
   DonationSolver,
+  FuzzyIdentitySolver,
+  FuzzyIdentitySolution,
   FiftyYearsSolver,
   GuessTheNewNumberSolver,
   PredictTheFutureSolver,
