@@ -4,6 +4,7 @@ export { forceSend } from "./forceSend";
 export { fuzzyId, mineSalt } from "./fuzzyId";
 export { mapping } from "./mapping";
 export { predictTheFuture } from "./predictTheFuture";
+export { publicKey } from "./publicKey";
 export { retirementFund } from "./retirementFund";
 export { tokenBank } from "./tokenBank";
 export { tokenSale } from "./tokenSale";
