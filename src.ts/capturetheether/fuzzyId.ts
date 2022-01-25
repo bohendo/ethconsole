@@ -1,6 +1,8 @@
 import { getCreate2Address, getContractAddress } from "@ethersproject/address";
-import { hexlify, zeroPad } from "@ethersproject/bytes";
+import { hexlify } from "@ethersproject/bytes";
+import { randomBytes } from "@ethersproject/random";
 import { Contract, ContractFactory } from "@ethersproject/contracts";
+import { AddressZero, HashZero } from "@ethersproject/constants";
 import { keccak256 } from "@ethersproject/keccak256";
 import { formatEther } from "@ethersproject/units";
 
@@ -9,7 +11,32 @@ import { provider, wallets } from "../constants";
 import { deployments } from "../deployments";
 import { log } from "../utils";
 
-export const fuzzyId = async (player = wallets[0]): Promise<void> => {
+const isValid = (address: string): boolean => address.endsWith("badc0de");
+
+export const mineSalt = async (player = wallets[0]): Promise<void> => {
+  const playerAddress = await player.getAddress();
+  const nonce = await provider.getTransactionCount(playerAddress);
+  const contractAddress = getContractAddress({ from: playerAddress, nonce });
+  const initCode = artifacts.FuzzyIdentitySolution.bytecode;
+  const initCodeHash = keccak256(initCode);
+  log(`Mining a salt for player ${playerAddress} w nonce ${nonce}`);
+  let salt = HashZero;
+  let create2Address = AddressZero;
+  const maxChecks = 1_000_000_000; // expected to take ~ 2^32 = 4,294,967,296 guess/checks
+  let check = 0;
+  while (!isValid(create2Address) && check <= maxChecks) {
+    salt = hexlify(randomBytes(32));
+    create2Address = getCreate2Address(contractAddress, salt, initCodeHash);
+    check += 1;
+  }
+  if (isValid(create2Address)) {
+    log(`Found a salt that generates ${create2Address} via factory at ${contractAddress}: ${salt}`);
+  } else {
+    log(`Failed to find a valid salt within ${maxChecks} guess/checks`);
+  }
+};
+
+export const fuzzyId = async (salt: string, player = wallets[0]): Promise<void> => {
 
   const userAddress = await player.getAddress();
   log(`User address = ${userAddress}`);
@@ -30,20 +57,19 @@ export const fuzzyId = async (player = wallets[0]): Promise<void> => {
 
   const nonce = await provider.getTransactionCount(player.address);
   const contractAddress = getContractAddress({ from: player.address, nonce });
-  const salt = hexlify(zeroPad("0x00", 32));
   const initCode = artifacts.FuzzyIdentitySolution.bytecode;
   const initCodeHash = keccak256(initCode);
   const create2Address = getCreate2Address(contractAddress, salt, initCodeHash);
 
   log(`Contract at ${contractAddress} is expected to deploy a solution to ${create2Address}`);
 
-  if (!create2Address.endsWith("badc0de")) {
+  if (!isValid(create2Address)) {
     log(`Salt of ${salt} does NOT return a valid solution, try mining a new salt value`);
   } else {
     log(`Salt of ${salt} DOES return a valid solution, yay!`);
   }
 
-  const solver = await factory.deploy(challenge.address, initCode, salt);
+  const solver = await factory.deploy(salt);
   log(`Sent solver deploy tx ${solver.deployTransaction.hash}`);
   await solver.deployTransaction.wait();
   log(`Solver deploy tx has been mined`);
@@ -54,17 +80,20 @@ export const fuzzyId = async (player = wallets[0]): Promise<void> => {
   if (solver.address !== contractAddress) throw new Error(`Contract address mismatch`);
   if (solutionAddress !== create2Address) throw new Error(`Create2 address mismatch`);
 
-  // TODO: add authenticate fn to the solution & call it to ensure our solution works
   const solution = new Contract(
     solutionAddress,
     artifacts.FuzzyIdentitySolution.abi,
     player,
   );
 
-  const authTx = await solution.authenticate();
-  log(`Sent auth tx ${authTx.hash}`);
-  await authTx.wait();
-  log(`Auth tx was mined`);
+  try {
+    const authTx = await solution.authenticate(challenge.address);
+    log(`Sent auth tx ${authTx.hash}`);
+    await authTx.wait();
+    log(`Auth tx was mined`);
+  } catch (e) {
+    log(`Failed to authenticate, this solution is not valid`);
+  }
 
   log(`Challenge complete = ${await challenge.isComplete()}`);
 

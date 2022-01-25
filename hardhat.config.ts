@@ -22,17 +22,25 @@ const config: HardhatUserConfig = {
     tests: "./src.ts/tests",
   },
   solidity: {
-    version: packageJson.devDependencies.solc,
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
+    compilers: [
+      {
+        version: packageJson.devDependencies.solc,
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
-    },
+    ],
     overrides: {
       "src.sol/LiquidityManager.sol": {
         version: packageJson.devDependencies.solc,
         settings: { optimizer: { enabled: true, runs: 1 } },
+      },
+      "src.sol/capturetheether/FuzzyIdentitySolver.sol": {
+        version: "0.8.9",
+        settings: { optimizer: { enabled: false } },
       },
     },
   },

@@ -47,37 +47,47 @@ deployments[1] = mainnetDeployment;
 
 ////////////////////////////////////////
 // 3 - Ropsten
+import * as AccountTakeoverChallenge from "../deployments/ropsten/AccountTakeoverChallenge.json";
+import * as AssumeOwnershipChallenge from "../deployments/ropsten/AssumeOwnershipChallenge.json";
 import * as CaptureTheEther from "../deployments/ropsten/CaptureTheEther.json";
 import * as DonationChallenge from "../deployments/ropsten/DonationChallenge.json";
-import * as FuzzyIdentityChallenge from "../deployments/ropsten/FuzzyIdentityChallenge.json";
 import * as FiftyYearsChallenge from "../deployments/ropsten/FiftyYearsChallenge.json";
-import * as NicknameChallenge from "../deployments/ropsten/NicknameChallenge.json";
-import * as GuessTheNumberChallenge from "../deployments/ropsten/GuessTheNumberChallenge.json";
-import * as GuessTheSecretNumberChallenge from "../deployments/ropsten/GuessTheSecretNumberChallenge.json";
-import * as GuessTheRandomNumberChallenge from "../deployments/ropsten/GuessTheRandomNumberChallenge.json";
+import * as FuzzyIdentityChallenge from "../deployments/ropsten/FuzzyIdentityChallenge.json";
 import * as GuessTheNewNumberChallenge from "../deployments/ropsten/GuessTheNewNumberChallenge.json";
+import * as GuessTheNumberChallenge from "../deployments/ropsten/GuessTheNumberChallenge.json";
+import * as GuessTheRandomNumberChallenge from "../deployments/ropsten/GuessTheRandomNumberChallenge.json";
+import * as GuessTheSecretNumberChallenge from "../deployments/ropsten/GuessTheSecretNumberChallenge.json";
+import * as MappingChallenge from "../deployments/ropsten/MappingChallenge.json";
+import * as NicknameChallenge from "../deployments/ropsten/NicknameChallenge.json";
 import * as PredictTheFutureChallenge from "../deployments/ropsten/PredictTheFutureChallenge.json";
 import * as PredictTheFutureSolver from "../deployments/ropsten/PredictTheFutureSolver.json";
+import * as PublicKeyChallenge from "../deployments/ropsten/PublicKeyChallenge.json";
+import * as RetirementFundChallenge from "../deployments/ropsten/RetirementFundChallenge.json";
+import * as SimpleERC223Token from "../deployments/ropsten/SimpleERC223Token.json";
+import * as TokenBankChallenge from "../deployments/ropsten/TokenBankChallenge.json";
 import * as TokenSaleChallenge from "../deployments/ropsten/TokenSaleChallenge.json";
 import * as TokenWhaleChallenge from "../deployments/ropsten/TokenWhaleChallenge.json";
-import * as RetirementFundChallenge from "../deployments/ropsten/RetirementFundChallenge.json";
-import * as MappingChallenge from "../deployments/ropsten/MappingChallenge.json";
 const ropstenDeployment = {
+  AccountTakeoverChallenge,
+  AssumeOwnershipChallenge,
   CaptureTheEther,
-  NicknameChallenge,
-  FiftyYearsChallenge,
   DonationChallenge,
+  FiftyYearsChallenge,
   FuzzyIdentityChallenge,
-  GuessTheNumberChallenge,
-  GuessTheSecretNumberChallenge,
-  GuessTheRandomNumberChallenge,
   GuessTheNewNumberChallenge,
+  GuessTheNumberChallenge,
+  GuessTheRandomNumberChallenge,
+  GuessTheSecretNumberChallenge,
+  MappingChallenge,
+  NicknameChallenge,
   PredictTheFutureChallenge,
   PredictTheFutureSolver,
+  PublicKeyChallenge,
+  RetirementFundChallenge,
+  SimpleERC223Token,
+  TokenBankChallenge,
   TokenSaleChallenge,
   TokenWhaleChallenge,
-  RetirementFundChallenge,
-  MappingChallenge,
 };
 deployments.ropsten = ropstenDeployment;
 deployments["3"] = ropstenDeployment;

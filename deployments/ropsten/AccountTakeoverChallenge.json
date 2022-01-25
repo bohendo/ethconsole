@@ -1,0 +1,28 @@
+{
+  "address": "0x2028DBbA2ee68ED58888ce7bed45f7e9b237D152",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [],
+      "name": "authenticate",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "isComplete",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
