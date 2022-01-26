@@ -11,7 +11,7 @@ import { provider, wallets } from "../constants";
 import { deployments } from "../deployments";
 import { log } from "../utils";
 
-const isValid = (address: string): boolean => address.endsWith("badc0de");
+const isValid = (address: string): boolean => address.toLowerCase().endsWith("badc0de");
 
 export const mineSalt = async (player = wallets[0]): Promise<void> => {
   const playerAddress = await player.getAddress();
@@ -22,17 +22,14 @@ export const mineSalt = async (player = wallets[0]): Promise<void> => {
   log(`Mining a salt for player ${playerAddress} w nonce ${nonce}`);
   let salt = HashZero;
   let create2Address = AddressZero;
-  const maxChecks = 1_000_000_000; // expected to take ~ 2^32 = 4,294,967,296 guess/checks
-  let check = 0;
-  while (!isValid(create2Address) && check <= maxChecks) {
+  // expected to take ~ 2^32 = 4,294,967,296 guess/checks
+  while (!isValid(create2Address)) {
     salt = hexlify(randomBytes(32));
     create2Address = getCreate2Address(contractAddress, salt, initCodeHash);
-    check += 1;
-  }
-  if (isValid(create2Address)) {
-    log(`Found a salt that generates ${create2Address} via factory at ${contractAddress}: ${salt}`);
-  } else {
-    log(`Failed to find a valid salt within ${maxChecks} guess/checks`);
+    if (isValid(create2Address)) {
+      log(`Found a salt that generates ${create2Address} via factory at ${contractAddress}: ${salt}`);
+      break;
+    }
   }
 };
 
