@@ -37,6 +37,7 @@ setGlobal("artifacts", artifacts);
 setGlobal("BN", eth.BigNumber.from);
 setGlobal("checkMnemonic", checkMnemonic);
 setGlobal("cte", cte);
+setGlobal("secp256k1", cte.secp256k1);
 setGlobal("eth", eth);
 setGlobal("getLedgerSigner", getLedgerSigner);
 setGlobal("initLiq", initLiq);

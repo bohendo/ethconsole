@@ -4,7 +4,6 @@ import { randomBytes } from "@ethersproject/random";
 import { Contract, ContractFactory } from "@ethersproject/contracts";
 import { AddressZero, HashZero } from "@ethersproject/constants";
 import { keccak256 } from "@ethersproject/keccak256";
-import { formatEther } from "@ethersproject/units";
 
 import { artifacts } from "../artifacts";
 import { provider, wallets } from "../constants";
@@ -37,7 +36,7 @@ export const fuzzyId = async (salt: string, player = wallets[0]): Promise<void> 
 
   const userAddress = await player.getAddress();
   log(`User address = ${userAddress}`);
-  log(`User balance = ${formatEther(await provider.getBalance(userAddress))}`);
+  log(`User nonce = ${await provider.getTransactionCount(userAddress)}`);
 
   const challenge = new Contract(
     deployments.ropsten.FuzzyIdentityChallenge.address,

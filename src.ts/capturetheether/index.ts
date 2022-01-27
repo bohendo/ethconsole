@@ -1,4 +1,4 @@
-export { accountTakeover } from "./accountTakeover";
+export { accountTakeover, secp256k1, secp256k1Test } from "./accountTakeover";
 export { assumeOwnership } from "./assumeOwnership";
 export { donation } from "./donation";
 export { fiftyYears } from "./fiftyYears";
