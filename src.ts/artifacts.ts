@@ -9,6 +9,7 @@ import * as FuzzyIdentitySolver from "../artifacts/src.sol/capturetheether/Fuzzy
 import * as GuessTheNewNumberSolver from "../artifacts/src.sol/capturetheether/GuessTheNewNumberSolver.sol/GuessTheNewNumberSolver.json";
 import * as MappingChallenge from "../artifacts/src.sol/capturetheether/MappingChallenge.sol/MappingChallenge.json";
 import * as MappingSolver from "../artifacts/src.sol/capturetheether/MappingSolver.sol/MappingSolver.json";
+import * as PredictTheBlockHashSolver from "../artifacts/src.sol/capturetheether/PredictTheBlockHashSolver.sol/PredictTheBlockHashSolver.json";
 import * as PredictTheFutureSolver from "../artifacts/src.sol/capturetheether/PredictTheFutureSolver.sol/PredictTheFutureSolver.json";
 import * as RetirementFundSolver from "../artifacts/src.sol/capturetheether/RetirementFundSolver.sol/RetirementFundSolver.json";
 import * as TokenSaleSolver from "../artifacts/src.sol/capturetheether/TokenSaleSolver.sol/TokenSaleSolver.json";
@@ -63,6 +64,7 @@ export const artifacts: Artifacts = {
   LiquidityManager,
   MappingChallenge,
   MappingSolver,
+  PredictTheBlockHashSolver,
   PredictTheFutureSolver,
   RetirementFundSolver,
   TokenBankSolver,
@@ -93,6 +95,7 @@ export {
   LiquidityManager,
   MappingChallenge,
   MappingSolver,
+  PredictTheBlockHashSolver,
   PredictTheFutureSolver,
   RetirementFundSolver,
   TokenBankSolver,

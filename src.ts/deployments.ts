@@ -59,6 +59,7 @@ import * as GuessTheRandomNumberChallenge from "../deployments/ropsten/GuessTheR
 import * as GuessTheSecretNumberChallenge from "../deployments/ropsten/GuessTheSecretNumberChallenge.json";
 import * as MappingChallenge from "../deployments/ropsten/MappingChallenge.json";
 import * as NicknameChallenge from "../deployments/ropsten/NicknameChallenge.json";
+import * as PredictTheBlockHashChallenge from "../deployments/ropsten/PredictTheBlockHashChallenge.json";
 import * as PredictTheFutureChallenge from "../deployments/ropsten/PredictTheFutureChallenge.json";
 import * as PredictTheFutureSolver from "../deployments/ropsten/PredictTheFutureSolver.json";
 import * as PublicKeyChallenge from "../deployments/ropsten/PublicKeyChallenge.json";
@@ -80,6 +81,7 @@ const ropstenDeployment = {
   GuessTheSecretNumberChallenge,
   MappingChallenge,
   NicknameChallenge,
+  PredictTheBlockHashChallenge,
   PredictTheFutureChallenge,
   PredictTheFutureSolver,
   PublicKeyChallenge,

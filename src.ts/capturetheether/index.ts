@@ -1,4 +1,4 @@
-export { accountTakeover, secp256k1, secp256k1Test } from "./accountTakeover";
+export { accountTakeover, secp256k1 } from "./accountTakeover";
 export { assumeOwnership } from "./assumeOwnership";
 export { donation } from "./donation";
 export { fiftyYears } from "./fiftyYears";
@@ -6,6 +6,7 @@ export { forceSend } from "./forceSend";
 export { fuzzyId, mineSalt } from "./fuzzyId";
 export { mapping } from "./mapping";
 export { predictTheFuture } from "./predictTheFuture";
+export { predictTheHash, mineBlocks } from "./predictTheHash";
 export { publicKey } from "./publicKey";
 export { retirementFund } from "./retirementFund";
 export { tokenBank } from "./tokenBank";
