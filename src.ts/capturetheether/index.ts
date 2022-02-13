@@ -6,7 +6,7 @@ export { forceSend } from "./forceSend";
 export { fuzzyId, mineSalt } from "./fuzzyId";
 export { mapping } from "./mapping";
 export { predictTheFuture } from "./predictTheFuture";
-export { predictTheHash, mineBlocks } from "./predictTheHash";
+export { mineBlocks, predictTheHash, settleHashPrediction } from "./predictTheHash";
 export { publicKey } from "./publicKey";
 export { retirementFund } from "./retirementFund";
 export { tokenBank } from "./tokenBank";
