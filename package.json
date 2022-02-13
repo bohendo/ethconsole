@@ -51,7 +51,7 @@
     "eslint-plugin-unused-imports": "1.0.1",
     "ethereum-waffle": "3.2.2",
     "mocha": "8.2.1",
-    "solc": "0.4.21",
+    "solc": "0.7.6",
     "solhint": "3.3.2",
     "ts-mocha": "8.0.0",
     "ts-node": "9.1.1",

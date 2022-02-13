@@ -6,6 +6,18 @@
 export const deployments = {} as any;
 
 ////////////////////////////////////////
+// 80001 - mumbai
+import * as LensHub from "../deployments/mumbai/LensHub.json";
+import * as LensHubProxy from "../deployments/mumbai/LensHubProxy.json";
+const mumbaiDeployment = {
+  LensHub,
+  LensHubProxy,
+};
+deployments.mumbai = mumbaiDeployment;
+deployments["80001"] = mumbaiDeployment;
+deployments[80001] = mumbaiDeployment;
+
+////////////////////////////////////////
 // 1 - mainnet
 import * as mainnetAAVE from "../deployments/mainnet/AAVE.json";
 import * as mainnetCOMP from "../deployments/mainnet/COMP.json";
@@ -94,43 +106,3 @@ const ropstenDeployment = {
 deployments.ropsten = ropstenDeployment;
 deployments["3"] = ropstenDeployment;
 deployments[3] = ropstenDeployment;
-
-/*
-////////////////////////////////////////
-// 1337 - localhost
-import * as localhostFakeAAVE from "../deployments/localhost/FakeAAVE.json";
-import * as localhostFakeCOMP from "../deployments/localhost/FakeCOMP.json";
-import * as localhostFakeMKR from "../deployments/localhost/FakeMKR.json";
-import * as localhostFakeUNI from "../deployments/localhost/FakeUNI.json";
-import * as localhostFakeWBTC from "../deployments/localhost/FakeWBTC.json";
-import * as localhostFakeYFI from "../deployments/localhost/FakeYFI.json";
-import * as localhostUniswapFactory from "../deployments/localhost/UniswapFactory.json";
-import * as localhostUniswapPair_ETH_AAVE from "../deployments/localhost/UniswapPair_ETH_AAVE.json";
-import * as localhostUniswapPair_ETH_COMP from "../deployments/localhost/UniswapPair_ETH_COMP.json";
-import * as localhostUniswapPair_ETH_MKR from "../deployments/localhost/UniswapPair_ETH_MKR.json";
-import * as localhostUniswapPair_ETH_UNI from "../deployments/localhost/UniswapPair_ETH_UNI.json";
-import * as localhostUniswapPair_ETH_WBTC from "../deployments/localhost/UniswapPair_ETH_WBTC.json";
-import * as localhostUniswapPair_ETH_YFI from "../deployments/localhost/UniswapPair_ETH_YFI.json";
-import * as localhostUniswapRouter from "../deployments/localhost/UniswapRouter.json";
-import * as localhostWETH from "../deployments/localhost/WETH.json";
-const localhostDeployment = {
-  AAVE: localhostFakeAAVE,
-  COMP: localhostFakeCOMP,
-  MKR: localhostFakeMKR,
-  UNI: localhostFakeUNI,
-  UniswapFactory: localhostUniswapFactory,
-  Uni_ETH_AAVE: localhostUniswapPair_ETH_AAVE,
-  Uni_ETH_COMP: localhostUniswapPair_ETH_COMP,
-  Uni_ETH_MKR: localhostUniswapPair_ETH_MKR,
-  Uni_ETH_UNI: localhostUniswapPair_ETH_UNI,
-  Uni_ETH_WBTC: localhostUniswapPair_ETH_WBTC,
-  Uni_ETH_YFI: localhostUniswapPair_ETH_YFI,
-  UniswapRouter: localhostUniswapRouter,
-  WBTC: localhostFakeWBTC,
-  WETH: localhostWETH,
-  YFI: localhostFakeYFI,
-};
-deployments.localhost = localhostDeployment;
-deployments["1337"] = localhostDeployment;
-deployments[1337] = localhostDeployment;
-*/
