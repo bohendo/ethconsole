@@ -4,7 +4,6 @@ import * as eth from "ethers";
 import { env, provider, wallets } from "./constants";
 import { artifacts } from "./artifacts";
 import { deployments } from "./deployments";
-import { ledger, getLedgerSigner } from "./ledger";
 import { log, sqrt, toHumanReadable, traceStorage } from "./utils";
 
 // Will console.log if any of the target addresses can be derived from the given mnemonic
@@ -35,9 +34,6 @@ setGlobal("artifacts", artifacts);
 setGlobal("BN", eth.BigNumber.from);
 setGlobal("checkMnemonic", checkMnemonic);
 setGlobal("eth", eth);
-setGlobal("getLedgerSigner", getLedgerSigner);
-setGlobal("initLiq", initLiq);
-setGlobal("ledger", ledger);
 setGlobal("log", log);
 setGlobal("provider", provider);
 setGlobal("sqrt", sqrt);

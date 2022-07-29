@@ -8,7 +8,7 @@ import * as FakeToken from "../artifacts/src.sol/tokens/FakeToken.sol/FakeToken.
 import * as FakeUNI from "../artifacts/src.sol/tokens/FakeUNI.sol/FakeUNI.json";
 import * as FakeWBTC from "../artifacts/src.sol/tokens/FakeWBTC.sol/FakeWBTC.json";
 import * as FakeYFI from "../artifacts/src.sol/tokens/FakeYFI.sol/FakeYFI.json";
-import * as WETH from "../artifacts/src.sol/weth.sol/WETH.json";
+import * as WETH from "../artifacts/src.sol/tokens/weth.sol/WETH.json";
 // Uniswap
 import * as UniswapFactory from "../artifacts/src.sol/uniswap/factory.sol/UniswapFactory.json";
 import * as UniswapPair from "../artifacts/src.sol/uniswap/pair.sol/UniswapPair.json";
