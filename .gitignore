@@ -3,6 +3,7 @@
 deployments/localhost
 
 # Build Output
+crytic-export
 **/*.0x
 **/.flags
 **/_build/**
