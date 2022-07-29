@@ -116,12 +116,12 @@ const func: DeployFunction = async () => {
         await (await TokenB.approve(router.address, parseEther(amountB))).wait();
         log.debug(`Successfully approved ${router.address} to spend ${parseEther(amountB)} ${token.address}`);
         tx = await router.addLiquidity(
-          weth.address,
           token.address,
-          parseEther(amountA),
+          weth.address,
           parseEther(amountB),
           parseEther(amountA),
           parseEther(amountB),
+          parseEther(amountA),
           deployer,
           Date.now() + 180 * 1000,
         );

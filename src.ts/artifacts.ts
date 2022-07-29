@@ -1,5 +1,6 @@
 import { FunctionFragment, EventFragment, ParamType } from "@ethersproject/abi";
 
+import * as Scratchpad from "../artifacts/src.sol/Scratchpad.sol/Scratchpad.json";
 // Tokens
 import * as FakeToken from "../artifacts/src.sol/tokens/FakeToken.sol/FakeToken.json";
 import * as LINK from "../artifacts/src.sol/tokens/LINK.sol/LINK.json";
@@ -22,6 +23,7 @@ type Artifact = {
 type Artifacts = { [contractName: string]: Artifact };
 
 export const artifacts: Artifacts = {
+  Scratchpad,
   FakeToken,
   LINK,
   WETH,
@@ -31,6 +33,7 @@ export const artifacts: Artifacts = {
 };
 
 export {
+  Scratchpad,
   FakeToken,
   LINK,
   WETH,
@@ -38,3 +41,4 @@ export {
   UniswapPair,
   UniswapRouter,
 };
+
