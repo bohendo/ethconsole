@@ -1,7 +1,6 @@
 import { Contract } from "@ethersproject/contracts";
 import * as eth from "ethers";
 
-import * as cte from "./capturetheether";
 import { env, provider, wallets } from "./constants";
 import { artifacts } from "./artifacts";
 import { deployments } from "./deployments";
@@ -36,8 +35,6 @@ const setGlobal = (key: string, value: any): void => {
 setGlobal("artifacts", artifacts);
 setGlobal("BN", eth.BigNumber.from);
 setGlobal("checkMnemonic", checkMnemonic);
-setGlobal("cte", cte);
-setGlobal("secp256k1", cte.secp256k1);
 setGlobal("eth", eth);
 setGlobal("getLedgerSigner", getLedgerSigner);
 setGlobal("initLiq", initLiq);
