@@ -30,12 +30,7 @@ const func: DeployFunction = async () => {
     log.info(`Running localnet migration`);
     for (const row of [
       ["WETH", []],
-      ["FakeAAVE", []],
-      ["FakeCOMP", []],
-      ["FakeMKR", []],
-      ["FakeUNI", []],
-      ["FakeWBTC", []],
-      ["FakeYFI", []],
+      ["LINK", []],
     ]) {
       const name = row[0] as string;
       const args = row[1] as Array<string | BigNumber>;

@@ -74,12 +74,7 @@ const func: DeployFunction = async () => {
     const pairArtifact = await deployments.getArtifact("UniswapPair");
 
     for (const [name, price] of [
-      ["FakeAAVE", "4.5"],
-      ["FakeCOMP", "5.6"],
-      ["FakeMKR", "0.95"],
-      ["FakeUNI", "91.1"],
-      ["FakeWBTC", "0.041"],
-      ["FakeYFI", "0.045"],
+      ["LINK", "8.0"],
     ]) {
       const token = await (ethers as any).getContract(name);
       log.info(`Creating uniswap pair for ${name}`);
