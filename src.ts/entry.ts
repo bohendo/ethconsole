@@ -4,7 +4,6 @@ import * as eth from "ethers";
 import { env, provider, wallets } from "./constants";
 import { artifacts } from "./artifacts";
 import { deployments } from "./deployments";
-import { initLiq } from "./initLiq";
 import { ledger, getLedgerSigner } from "./ledger";
 import { log, sqrt, toHumanReadable, traceStorage } from "./utils";
 

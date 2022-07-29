@@ -10,8 +10,6 @@ import * as FakeWBTC from "../artifacts/src.sol/tokens/FakeWBTC.sol/FakeWBTC.jso
 import * as FakeYFI from "../artifacts/src.sol/tokens/FakeYFI.sol/FakeYFI.json";
 import * as WETH from "../artifacts/src.sol/weth.sol/WETH.json";
 // Uniswap
-import * as InitLiquidity from "../artifacts/src.sol/InitLiquidity.sol/InitLiquidity.json";
-import * as LiquidityManager from "../artifacts/src.sol/LiquidityManager.sol/LiquidityManager.json";
 import * as UniswapFactory from "../artifacts/src.sol/uniswap/factory.sol/UniswapFactory.json";
 import * as UniswapPair from "../artifacts/src.sol/uniswap/pair.sol/UniswapPair.json";
 import * as UniswapRouter from "../artifacts/src.sol/uniswap/router.sol/UniswapRouter.json";
@@ -36,8 +34,6 @@ export const artifacts: Artifacts = {
   FakeUNI,
   FakeWBTC,
   FakeYFI,
-  InitLiquidity,
-  LiquidityManager,
   UniswapFactory,
   UniswapPair,
   UniswapRouter,
@@ -52,8 +48,6 @@ export {
   FakeUNI,
   FakeWBTC,
   FakeYFI,
-  InitLiquidity,
-  LiquidityManager,
   UniswapFactory,
   UniswapPair,
   UniswapRouter,
