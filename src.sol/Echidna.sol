@@ -14,9 +14,9 @@ contract Echidna  {
         token = new FakeToken("Fake Token", "FAKE");
     }
 
-    function testFun() public {
-        scratchpad.fun();
-        assert(scratchpad.a() == scratchpad.b());
+    function testFun(uint256 seed) public {
+        scratchpad.fun(seed);
+        assert(scratchpad.valid());
     }
 
 }

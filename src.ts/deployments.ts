@@ -45,6 +45,7 @@ deployments.mainnet = mainnetDeployment;
 deployments["1"] = mainnetDeployment;
 deployments[1] = mainnetDeployment;
 
+/*
 ////////////////////////////////////////
 // 1337 - localhost
 import * as Scratchpad from "../deployments/localhost/Scratchpad.json";
@@ -54,6 +55,7 @@ const localhostDeployment = {
 deployments.localhost = localhostDeployment;
 deployments["1337"] = localhostDeployment;
 deployments[1337] = localhostDeployment;
+*/
 
 ////////////////////////////////////////
 // 80001 - mumbai
