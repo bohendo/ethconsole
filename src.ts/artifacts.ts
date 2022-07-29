@@ -9,8 +9,6 @@ import * as FakeUNI from "../artifacts/src.sol/tokens/FakeUNI.sol/FakeUNI.json";
 import * as FakeWBTC from "../artifacts/src.sol/tokens/FakeWBTC.sol/FakeWBTC.json";
 import * as FakeYFI from "../artifacts/src.sol/tokens/FakeYFI.sol/FakeYFI.json";
 import * as WETH from "../artifacts/src.sol/weth.sol/WETH.json";
-// ETH2
-import * as DepositContract from "../artifacts/src.sol/eth2/Deposit.sol/DepositContract.json";
 // Uniswap
 import * as InitLiquidity from "../artifacts/src.sol/InitLiquidity.sol/InitLiquidity.json";
 import * as LiquidityManager from "../artifacts/src.sol/LiquidityManager.sol/LiquidityManager.json";
@@ -31,7 +29,6 @@ type Artifact = {
 type Artifacts = { [contractName: string]: Artifact };
 
 export const artifacts: Artifacts = {
-  DepositContract,
   FakeAAVE,
   FakeCOMP,
   FakeMKR,
@@ -48,7 +45,6 @@ export const artifacts: Artifacts = {
 };
 
 export {
-  DepositContract,
   FakeAAVE,
   FakeCOMP,
   FakeMKR,

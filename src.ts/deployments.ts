@@ -1,21 +1,9 @@
 /* eslint-disable import/order */
 
 // To easily add deployments for a new network, copy paste one of the following blocks
-//   then, search/replace network name (eg rinkeby) + chain id (eg 4)
+//   then, search/replace both: network name (eg mainnet) & chain id (eg 1)
 
 export const deployments = {} as any;
-
-////////////////////////////////////////
-// 80001 - mumbai
-import * as LensHub from "../deployments/mumbai/LensHub.json";
-import * as LensHubProxy from "../deployments/mumbai/LensHubProxy.json";
-const mumbaiDeployment = {
-  LensHub,
-  LensHubProxy,
-};
-deployments.mumbai = mumbaiDeployment;
-deployments["80001"] = mumbaiDeployment;
-deployments[80001] = mumbaiDeployment;
 
 ////////////////////////////////////////
 // 1 - mainnet
@@ -106,3 +94,16 @@ const ropstenDeployment = {
 deployments.ropsten = ropstenDeployment;
 deployments["3"] = ropstenDeployment;
 deployments[3] = ropstenDeployment;
+
+////////////////////////////////////////
+// 80001 - mumbai
+import * as LensHub from "../deployments/mumbai/LensHub.json";
+import * as LensHubProxy from "../deployments/mumbai/LensHubProxy.json";
+const mumbaiDeployment = {
+  LensHub,
+  LensHubProxy,
+};
+deployments.mumbai = mumbaiDeployment;
+deployments["80001"] = mumbaiDeployment;
+deployments[80001] = mumbaiDeployment;
+
