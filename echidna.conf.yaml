@@ -1,0 +1,9 @@
+corpusDir: './corpus'
+#filterBlacklist: false
+#filterFunctions: ["Echidna.testFulfillAdvancedOrder(bytes32)"]
+initialize: ./init.json
+testMode: assertion
+testLimit: 4000
+propMaxGas: 99999999999
+testMaxGas: 99999999999
+codeSize: 0xffffffffff

@@ -7,9 +7,9 @@ contract Scratchpad {
 
     constructor() {}
 
-    function fun(uint256 input) public {
+    function fun() public {
         a += 1;
         b += 1;
-        if (input % 42 == 0) a += 1;
+        if (a % 42 == 0) a += 1;
     }
 }

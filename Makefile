@@ -35,6 +35,9 @@ default: ethprovider
 start: transpiled-ts
 	bash ops/start.sh
 
+echidna: compiled-sol
+	echidna-test src.sol/Echidna.sol --contract Echidna --test-mode assertion --crytic-args="--solc-remap @openzeppelin/=node_modules/@openzeppelin/"
+
 start-ethprovider: ethprovider
 	bash ops/start-ethprovider.sh
 restart-ethprovider: stop-ethprovider ethprovider

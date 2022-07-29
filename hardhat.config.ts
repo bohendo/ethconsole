@@ -34,7 +34,7 @@ const config: HardhatUserConfig = {
       },
     ],
     overrides: {
-      // "src.sol/Scrathpad.sol": { version: "0.8.15" },
+      // "src.sol/Echidna.sol": { version: "0.8.15" },
     },
   },
   defaultNetwork: "hardhat",

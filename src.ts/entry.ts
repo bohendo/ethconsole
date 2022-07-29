@@ -33,6 +33,7 @@ const setGlobal = (key: string, value: any): void => {
 setGlobal("artifacts", artifacts);
 setGlobal("BN", eth.BigNumber.from);
 setGlobal("checkMnemonic", checkMnemonic);
+setGlobal("deployments", deployments);
 setGlobal("eth", eth);
 setGlobal("log", log);
 setGlobal("provider", provider);
